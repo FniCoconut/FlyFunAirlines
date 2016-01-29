@@ -1,0 +1,177 @@
+/* 
+    Created on : 26-dic-2015, 15:00:19
+    Author     : Coconut
+*/
+
+* {
+    margin: 0;
+}
+
+.header-bar {
+    background-color: #4e4e4e;
+    color: white;
+    font-family: sans-serif;
+    height: 90px;
+    position: fixed;
+    width: 100%;
+}
+
+.title {
+    float: left;
+    height: 32px;
+    margin-left: calc((100% - 512px) / 2);
+    margin-top: 24px;
+    text-align: center;
+    width: 300px;
+}
+
+.logo {
+    height: 80px;
+    position: relative;
+    width: 100%;
+}
+
+.acceso-usuario{
+    height: 80px;
+    float: right;
+    width: 50px;
+}
+
+.acceso-usuario>i{
+    position: relative;
+    margin-top: 40px;
+}
+
+.logo > img {
+    float: left;
+    margin-left: 44px;
+    margin-top: 8px;
+}
+
+.mapa{
+    /* position: relative; */
+    max-width: 50%;
+    min-width: 500px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*.mapa>img{
+    max-height: 100%;
+    max-width: 100%;
+}*/
+
+.path-bar {
+}
+
+.info {
+    float: left;
+    margin-top: 100px;
+    height: 550px;
+}
+
+aside.info {
+    width: 180px;
+    height: 100%!important;
+    background-color: green;
+}
+
+section.info {
+    width: calc(100% - 360px);
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+.usuario{
+    background-color: rgba(89, 45, 95, 0.45);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
+
+.usuario-action{
+    position: absolute;
+    right: 0px;
+    background-color: red;
+    display: block;
+    transition: 500ms;
+}
+
+.formulario-viaje{
+    width: 100%;
+    height: auto;
+}
+
+.estilo-origen{
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+
+.estilo-destino{
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+
+.datos-ida, .datos-vuelta{
+    margin-top: 10px;
+    width: 100%;
+    float: left;
+    text-align: center;
+}
+
+.pasajeros>label{
+    margin-left: 15px!important;
+}
+
+.datos-vuelta{
+    /*display: none;*/
+}
+
+.tipo-viaje{
+    margin-top: 15px;
+    width: 280px;
+    float:left;
+    margin-left: calc((100% - 280px) / 2);
+    text-align: center;
+}
+
+.radio-tipo-viaje{
+    width: 140px;
+    float: left;
+    text-align: center;
+}
+
+.btn-siguiente{
+    position: relative;
+    margin-left: calc(100% - 40px);
+    width: 40px;
+    height: 40px;
+    padding: 0px;
+    border: 0px;
+    border-radius: 40px;
+    background-color: red;
+}
+
+.pantalla-usuario{
+    background-color: rgba(89, 45, 95, 0.45);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
+
+.inicio-sesion{
+    position:relative;
+    top: 250px;
+    right:0px;
+}
+
+footer{
+    width: 100%;
+    height: 30px;
+    position: fixed;
+    bottom: 0;
+    background-color: #4e4e4e;
+}
