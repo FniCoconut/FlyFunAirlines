@@ -1,0 +1,290 @@
+<%-- 
+    Document   : revisionServicios
+    Created on : 30-ene-2016, 14:55:14
+    Author     : Coconut
+--%>
+
+<%@page import="FlyFunPackage.MODEL.Occupation"%>
+<%@page import="FlyFunPackage.MODEL.Service"%>
+<%@page import="FlyFunPackage.MODEL.Passenger"%>
+<%@page import="java.util.ArrayList"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Selección de asiento - Fly Fun Airlines</title>
+        
+        <script src="VIEW/jquery/jquery-1.12.0.min.js"></script> 
+        <!-- Libreria de jQuery compatible con IE -->
+        <script src="VIEW/js/canvas.js"></script>
+        <!-- Canvas de mapa imagen -->
+        <script src="VIEW/js/funciones-control.js"></script>
+        <!-- JS de funciones varias -->
+        <script src="VIEW/js/ajax.js"></script>
+        <!-- Ajax -->
+        <script src="VIEW/jquery-ui/jquery-ui.min.js"></script>
+        <!-- Lireria de jQuery User Interface -->
+        <link href="VIEW/css/general-style.css" rel="stylesheet"/>
+        <!-- Estilo general, lyout -->
+        <link href="VIEW/fonts/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+        <!-- Libreria de FontAwesome -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Libreria de iconos Material Google -->
+        <link rel="stylesheet" href="VIEW/jquery-ui/jquery-ui.min.css">
+        <!-- Estilos de la librería jQ -->
+       
+    </head>
+    
+    <body>
+        <!-- Cabecera -->
+        <%
+        //ArrayList<Service> aux = (ArrayList)session.getAttribute("services");
+        ArrayList<Service> aux = new ArrayList();
+        Occupation ocOW = (Occupation)session.getAttribute("occupationOW");
+        ArrayList<Passenger> pasajeros = ocOW.getPassengers();
+        
+        String kind = (String)session.getAttribute("kindTrip");
+        %>
+        <header class="header-bar">
+            <div class="logo">
+                <img src="./VIEW/img/logo.jpg" width="80" height="80" />
+                <div class="title"><span>Fly Fun Airlines</span></div>
+                <div id="acceso-usuario" class="acceso-usuario"><i class="fa fa-bars fa-2x"></i></div>
+                <nav class="path-bar"></nav>
+            </div>
+        </header>
+        
+        <!-- tiempo + redes -->
+        <aside class="info izquierda">
+            seccion de redes y tiempo
+        </aside>
+        
+        <!-- Formulario Viaje -->
+        <section class="info centro">
+            
+            <form action="servletRevisionServicios" class="formulario-viaje">
+                <div class="adulto pasajeros-servicio">
+                    <span>Selección de asiento:</span>
+    <%
+        for( int i=0; i<pasajeros.size() ; i++){
+            aux = (pasajeros.get(i)).getServices();
+            if( aux != null ){
+            for (int j=0 ; j<aux.size(); j++){
+            
+                //el pasajero ha elegido asiento
+        if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){        
+                    %>
+                    <div class="pasajero">
+                        <span>Pasajero <%=i+1%>:</span>
+                        <div class="datos-pasajero">
+                            <input type="hidden" name="asiento<%=i%>" value="" required>
+                            <span><%=pasajeros.get(i).getPrefix()+" "+pasajeros.get(i).getName()+" "+pasajeros.get(i).getSurname() %></span><br>
+                            <span>NIF: <%=pasajeros.get(i).getNif() %></span><br>
+                            <span class="asiento-seleccionado">Asiento seleccionado: </span>
+                        </div>
+                    </div>
+            <%
+                }
+            }
+        }
+    }
+    %>
+                </div>
+                
+                <div class="airplane-schema">
+                    <table class="airplane-style">
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="2"><!--aseos--></td>
+                        </tr>
+                        <!--asientos normales-->
+                        <tr>
+                            <td class="seat">
+                                <input type="hidden" value="1i" id="1i" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seat">
+                                <input type="hidden" value="2i" id="2i" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="pasillo"><!--pasillo--></td>
+                            <td class="seat">
+                                <input type="hidden" value="2d" id="2d" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seat">
+                                <input type="hidden" value="1d" id="1d" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="seat">
+                                <input type="hidden" value="3i" id="3i" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seat">
+                                <input type="hidden" value="4i" id="4i" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="pasillo"><!--pasillo--></td>
+                            <td class="seat">
+                                <input type="hidden" value="4d" id="4d" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seat">
+                                <input type="hidden" value="3d" id="3d" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                        </tr>
+                        <tr><td colspan="5"></td></tr>
+                        <!--asientos premiunm-->
+                        <tr>
+                            <td class="seat" colspan="2" rowspan="2">
+                                <input type="hidden" value="pi" id="pi" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="pasillo"><!--pasillo--></td>
+                            <td class="seat" colspan="2" rowspan="2">
+                                <input type="hidden" value="pd" id="pd" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                        </tr>
+                        <!--Aseos-->
+                        <tr>
+                            <td colspan="5"></td>
+                        </tr>
+                    </table>
+                </div>
+        <% 
+        if(kind.equalsIgnoreCase("vuelta")){
+            
+        //ArrayList<Passenger> pasajerosVuelta = (ArrayList)session.getAttribute("passengerR");
+            ArrayList<Passenger> pasajerosVuelta = ((Occupation)session.getAttribute("occupationR")).getPassengers();
+            
+            %>
+        <div class="asientos-viaje-vuelta">
+            <div class="adulto pasajeros-servicio">
+                <span>Selección de asiento de vuelta:</span>
+            <%
+                for( int i=0; i<pasajerosVuelta.size() ; i++){
+                    aux = pasajerosVuelta.get(i).getServices();
+                    if( aux != null ){
+                    for (int j=0 ; j<aux.size(); j++){
+
+                        //el pasajero ha elegido asiento
+                if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){        
+                            %>
+                    <div class="pasajero">
+                        <span>Pasajero <%=i+1%>:</span>
+                        <div class="datos-pasajero">
+                            <input type="hidden" name="asientoV<%=i%>" value="" required>
+                            <span><%=pasajerosVuelta.get(i).getPrefix()+" "+pasajerosVuelta.get(i).getName()+" "+pasajerosVuelta.get(i).getSurname() %></span><br>
+                            <span>NIF: <%=pasajerosVuelta.get(i).getNif() %></span><br>
+                            <span class="asiento-seleccionado">Asiento seleccionado: </span>
+                        </div>
+                    </div>
+            <%
+                }
+            }
+        }
+        }
+    }
+    %>
+                </div>
+                
+                <div class="airplane-schema">
+                    <table class="airplane-style">
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="2"><!--aseos--></td>
+                        </tr>
+                        <!--asientos normales-->
+                        <tr>
+                            <td class="seatV">
+                                <input type="hidden" value="1i" id="1iV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seatV">
+                                <input type="hidden" value="2i" id="2iV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="pasillo"><!--pasillo--></td>
+                            <td class="seatV">
+                                <input type="hidden" value="2d" id="2dV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seatV">
+                                <input type="hidden" value="1d" id="1dV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="seatV">
+                                <input type="hidden" value="3i" id="3iV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seatV">
+                                <input type="hidden" value="4i" id="4iV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="pasillo"><!--pasillo--></td>
+                            <td class="seatV">
+                                <input type="hidden" value="4d" id="4dV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="seatV">
+                                <input type="hidden" value="3d" id="3dV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                        </tr>
+                        <tr><td colspan="5"></td></tr>
+                        <!--asientos premiunm-->
+                        <tr>
+                            <td class="seat" colspan="2" rowspan="2">
+                                <input type="hidden" value="pi" id="piV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                            <td class="pasillo"><!--pasillo--></td>
+                            <td class="seat" colspan="2" rowspan="2">
+                                <input type="hidden" value="pd" id="pdV" name="asientoPassenger"/>
+                                <span><i class="material-icons">event_seat</i></span>
+                            </td>
+                        </tr>
+                        <!--Aseos-->
+                        <tr>
+                            <td colspan="5"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+                <input type="submit" class="btn-siguiente" value=">" />
+                
+            </form>
+            
+        </section>
+        <!-- tiempo + info viaje -->
+        <aside class="info derecha">
+            seccion de info vuelo y tiempo
+        </aside>
+        
+        <section class="pantalla-usuario" id="pantalla-usuario">
+        </section>    
+            <aside class="usuario" id="area-usuario">
+                <form action="" class="formulario-cliente">
+                    <div class="datos-usuario inicio-sesion">
+                        <label for="id-usuario">Nombre de usuario</label>
+                        <br>
+                        <input type="text" id="id-usuario"/>
+                        <br><br>
+                        <label for="pass-usuario">Contraseña</label>
+                        <br>
+                        <input type="password" />
+                        <br>
+                        <button onclick="validaUsuario(this.idUsuario.value, this.pas.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
+                    </div>
+                </form>
+                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+            </aside>
+    </body>
+</html>

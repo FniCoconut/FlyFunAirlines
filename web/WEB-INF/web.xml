@@ -17,8 +17,28 @@
         <servlet-class>FlyFunPackage.CONTROLLER.servletSeleccionVuelo</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>servletPasajeros</servlet-name>
-        <servlet-class>FlyFunPackage.CONTROLLER.servletPasajeros</servlet-class>
+        <servlet-name>servletPasajeroServicio</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletPasajeroServicio</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletRevisionServicios</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletRevisionServicios</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletCliente</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletCliente</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletLogin</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletLogin</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletPago</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletPago</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletOrigenDestino</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletOrigenDestino</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>servletOrigen</servlet-name>
@@ -37,8 +57,28 @@
         <url-pattern>/servletSeleccionVuelo</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>servletPasajeros</servlet-name>
-        <url-pattern>/servletPasajeros</url-pattern>
+        <servlet-name>servletPasajeroServicio</servlet-name>
+        <url-pattern>/servletPasajeroServicio</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletRevisionServicios</servlet-name>
+        <url-pattern>/servletRevisionServicios</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletCliente</servlet-name>
+        <url-pattern>/servletCliente</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletLogin</servlet-name>
+        <url-pattern>/servletLogin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletPago</servlet-name>
+        <url-pattern>/servletPago</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletOrigenDestino</servlet-name>
+        <url-pattern>/servletOrigenDestino</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -8,35 +8,28 @@ package FlyFunPackage.CONTROLLER;
 import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
 import FlyFunPackage.MODEL.Client;
-import FlyFunPackage.MODEL.Flight;
-import FlyFunPackage.MODEL.Occupation;
-import FlyFunPackage.MODEL.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author Coconut
  */
-public class servletSeleccionVuelo extends HttpServlet {
-
+public class servletCliente extends HttpServlet {
+    
     private Connection connection;
     private ConnectionBBDD connectionBBDD;
     
-    
     @Override
     public void init() throws ServletException{
-        
-        try{
+    
+    try{
             connectionBBDD = ConnectionBBDD.GetConexion();
             connection = connectionBBDD.GetCon();
         }catch(ClassNotFoundException cnfe){  
@@ -44,7 +37,6 @@ public class servletSeleccionVuelo extends HttpServlet {
         catch(SQLException sqle){
         }
     }
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -59,33 +51,21 @@ public class servletSeleccionVuelo extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            HttpSession session = request.getSession(true);
-            Client cliente = (Client)session.getAttribute("client");
             
-                ArrayList<Flight> _vuelosIda= (ArrayList)session.getAttribute("owFly");
-            //recogemos el vuelo necesario, el elegido
-            int idOWTrip = Integer.parseInt(request.getParameter("vueloIda"));
-            Occupation occupationOneWay = null;
+            String prefix = request.getParameter("prefijoCliente");
+            String surname = request.getParameter("nombreCliente");
+            String name = request.getParameter("apellidoCliente");
+            String nif = request.getParameter("nifCliente");
+            String tlf = request.getParameter("tlfCliente");
+            String eMail = request.getParameter("emailCliente");
+            String adress = request.getParameter("direccionCliente");
+            String pass = request.getParameter("passwordCliente");
             
-            for(int i = 0; i < _vuelosIda.size() ; i++){
-                if(_vuelosIda.get(i).getIdFlight() == idOWTrip){ occupationOneWay = new Occupation(_vuelosIda.get(i)); }
+            if(new Operation().addCliente(connection, new Client(nif, prefix, surname, name, tlf, eMail, adress, pass))){
+            response.sendRedirect("inicioviaje.jsp");
+            }else{
+                response.sendRedirect("cliente.jsp");
             }
-            session.setAttribute("occupationOW", occupationOneWay);
-            String trip = (String)session.getAttribute("kindTrip");
-            
-            if(trip.equalsIgnoreCase("vuelta")){
-                ArrayList<Flight> _vuelosVuelta = (ArrayList)session.getAttribute("rFly");
-                int idRTrip = Integer.parseInt(request.getParameter("vueloVuelta"));
-                Occupation occupationReturn = null;
-                
-                for(int i = 0; i < _vuelosVuelta.size() ; i++){
-                    if(_vuelosVuelta.get(i).getIdFlight() == idRTrip){occupationReturn = new Occupation(_vuelosVuelta.get(i));}
-                }
-                session.setAttribute("occupationR", occupationReturn);
-            }
-            
-            
-            response.sendRedirect("pasajero.jsp");
             
         }
     }

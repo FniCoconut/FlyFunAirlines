@@ -4,6 +4,8 @@
     Author     : Coconut
 --%>
 
+<%@page import="FlyFunPackage.MODEL.Service"%>
+<%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -36,6 +38,8 @@
         int adult = (int)session.getAttribute("adult");
         int child = (int)session.getAttribute("child");
         int infant = (int)session.getAttribute("infant");
+        String kind = (String)session.getAttribute("kindTrip");
+        ArrayList<Service> services = (ArrayList)session.getAttribute("services");
         %>
         <header class="header-bar">
             <div class="logo">
@@ -54,24 +58,39 @@
         <!-- Formulario Viaje -->
         <section class="info centro">
         
-            <form action="servletPasajeros" class="formulario-viaje">
+            <form action="servletPasajeroServicio" class="formulario-viaje">
                 <div class="adulto">
                 <% 
                 for(int i=0 ; i<adult ; i++ ){
                 %>
                     <div class="formulario-pasajero">
-
                         <label for="prefix">PREFIJO</label>
                         <select id="prefix" name="prefix<%=i%>">
                             <option>- Selecciona -</option>
                             <option value="Don">D.</option>
                             <option value="Doña">Dña.</option>
                         </select><br/>
-                        <label for="name">NOMBRE</label><input type="text" name="name<%=i%>" /><br/>
-                        <label for="surname">APELLIDOS</label><input type="text" name="surname<%=i%>" /><br/>
-                        <label for="nif">NIF</label><input type="text" name="nif<%=i%>"  /><br/>
-                        <label for="email">e-MAIL</label><input type="text" name="email<%=i%>" /><br/>
-
+                        <label for="name">NOMBRE</label><input type="text" name="name<%=i%>" class="i-adulto" /><br/>
+                        <label for="surname">APELLIDOS</label><input type="text" name="surname<%=i%>" class="i-adulto" /><br/>
+                        <label for="nif">NIF</label><input type="text" name="nif<%=i%>" class="i-adulto" /><br/>
+                        <label for="email">e-MAIL</label><input type="email" name="email<%=i%>" /><br/>
+                    </div>
+                    
+                    <div class="servicios">
+                        <div class="serv-ida">
+                            <label>Servicios viaje de ida</label><br/>
+                            <input type="checkbox" name="asiento<%=i%>" value="Asiento" /><span>Selección de asiento.</span><br/>
+                            <input type="checkbox" name="equipaje<%=i%>" value="Equipaje" /><span>Equipaje hasta 25kg.</span><br/>
+                            <input type="checkbox" name="seguro<%=i%>" value="SeguroViaje" checked/><span>Seguro de viaje</span>
+                        </div>
+                            <% if( kind.equalsIgnoreCase("vuelta")){ %>
+                        <div class="serv-vuelta">
+                            <label>Servicios viaje de vuelta</label><br/>
+                            <input type="checkbox" name="asientoV<%=i%>" value="Asiento" /><span>Selección de asiento.</span><br/>
+                            <input type="checkbox" name="equipajeV<%=i%>" value="Equipaje" /><span>Equipaje hasta 25kg.</span><br/>
+                            <input type="checkbox" name="seguroV<%=i%>" value="SeguroViaje" checked/><span>Seguro de viaje</span>
+                        </div>
+                        <%  }  %>
                     </div>
                 <%
                 }
@@ -81,13 +100,28 @@
                 <% 
                 for(int i=0 ; i<child ; i++ ){
                 %>
-                    <div class="formulario-pasajero">
+                    <div class="formulario-pasajero"><br/>
                         <label for="nameNino">NOMBRE</label><input type="text" name="nameNino<%=i%>" /><br/>
                         <label for="surnameNino">APELLIDOS</label><input type="text" name="surnameNino<%=i%>" /><br/>
                         <label for="nifNino">NIF</label><input type="text" name="nifNino<%=i%>" /><br/>
                         <label for="emailNino">e-MAIL</label><input type="text" name="emailNino<%=i%>"  /><br/>
                     </div>
-                    <div class="servicios"></div>
+                    <div class="servicios">
+                        <div class="serv-ida">
+                            <label>Servicios viaje de ida</label><br/>
+                            <input type="checkbox" name="asientoNino<%=i%>" value="Asiento" /><span>Selección de asiento.</span><br/>
+                            <input type="checkbox" name="equipajeNino<%=i%>" value="Equipaje" /><span>Equipaje hasta 25kg.</span><br/>
+                            <input type="checkbox" name="seguroNino<%=i%>" value="SeguroViaje" checked/><span>Seguro de viaje</span>
+                        </div>
+                        <% if( kind.equalsIgnoreCase("vuelta")){ %>
+                        <div class="serv-vuelta">
+                            <label>Servicios viaje de vuelta</label><br/>
+                            <input type="checkbox" name="asientoNinoV<%=i%>" value="Asiento" /><span>Selección de asiento.</span><br/>
+                            <input type="checkbox" name="equipajeNinoV<%=i%>" value="Equipaje" /><span>Equipaje hasta 25kg.</span><br/>
+                            <input type="checkbox" name="seguroNinoV<%=i%>" value="SeguroViaje" checked/><span>Seguro de viaje</span>
+                        </div>
+                        <%  }  %>
+                    </div>
                 <%
                 }
                 %>
@@ -102,9 +136,8 @@
                     <label for="nifBebe">NIF</label><input type="text" name="nifBebe<%=i%>" id="nifBebe"/><br/>
                     
                     <label for="adultoCargo">ADULTO A CARGO</label>
-                    <select id="adultoCargo" name="adultoCargo">
-                        <option>- Selecciona -</option>
-                        <option>Adulto a cargo</option>
+                    <select id="adultoCargo" name="adultoCargo<%=i%>" >
+                        <option>-Selecciona adulto a cargo-</option>
                     </select>
                 </div> 
                 <%
@@ -122,19 +155,23 @@
             seccion de info vuelo y tiempo
         </aside>
         
-        <aside class="usuario" id="area-usuario">
-            <form>
-                <div class="datos-usuario inicio-sesion">
-                    <label for="id-usuario">Nombre de usuario</label>
-                    <br>
-                    <input type="text" id="id-usuario"/>
-                    <br><br>
-                    <label for="pass-usuario">Contraseña</label>
-                    <br>
-                    <input type="password" />
-                </div>
-            </form>
-        </aside>
-        <!-- Pie de página -->
+        <section class="pantalla-usuario" id="pantalla-usuario">
+        </section>    
+            <aside class="usuario" id="area-usuario">
+                <form action="" class="formulario-cliente">
+                    <div class="datos-usuario inicio-sesion">
+                        <label for="id-usuario">Nombre de usuario</label>
+                        <br>
+                        <input type="text" id="id-usuario"/>
+                        <br><br>
+                        <label for="pass-usuario">Contraseña</label>
+                        <br>
+                        <input type="password" />
+                        <br>
+                        <button onclick="validaUsuario(this.idUsuario.value, this.pas.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
+                    </div>
+                </form>
+                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+            </aside>
     </body>
 </html>

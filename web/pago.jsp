@@ -1,15 +1,16 @@
 <%-- 
-    Document   : cliente
-    Created on : 23-dic-2015, 19:34:19
+    Document   : pago
+    Created on : 03-feb-2016, 18:10:51
     Author     : Coconut
 --%>
 
+<%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Alta Cliente - Fly Fun Airlines</title>
+        <title>Pago - Fly Fun Airlines</title>
         
         <script src="VIEW/jquery/jquery-1.12.0.min.js"></script> 
         <!-- Libreria de jQuery compatible con IE -->
@@ -31,8 +32,18 @@
     </head>
     <body>
         <%
-
+            //HttpSession session = request.getSession(true);
+            Client cliente = (Client)session.getAttribute("client");
+            if(cliente == null){
+              %>
+              <script>
+                 // popUpCliente();
+                 alert("<%=cliente.getName() %>");
+              </script>
+              <%
+            }
         %> 
+              
         <!-- Cabecera -->  
         <header class="header-bar">
             <div class="logo">
@@ -48,24 +59,35 @@
             seccion de redes y tiempo
         </aside>
         
+        <!-- Vuelos disponibles -->
+                           
+        
         <section class="info centro">
+            <div class="billetes">
+                <!-- Aquí se mostrarán los billetes por pasajero -->
+            </div>
             
-            <form action="servletCliente" class="formulario-viaje">
-                <label for="prefijoCliente">Prefijo</label>
-                <select id="prefijoCliente" name="prefijoCliente">
-                    <option>-Selecciona-</option>
-                    <option value="Don">D.</option>
-                    <option value="Doña">Dña.</option>
-                </select>
-                <label for="nombreCliente">Nombre</label><input type="text" id="nombreCliente" name="nombreCliente" maxlength="45" required /><br/> 
-                <label for="apellidoCliente">Apellidos</label><input type="text" id="apellidoCliente" name="apellidoCliente" maxlength="100" required /><br/> 
-                <label for="nifCliente">N.I.F.</label><input type="text" id="nifCliente" name="nifCliente" maxlength="10" required /><br/> 
-                <label for="tlfCliente">Teléfono</label><input type="text" id="tlfCliente" name="tlfCliente" maxlength="9">
-                <label for="emailCliente">e-Mail</label><input type="email" id="emailCliente" name="emailCliente" maxlength="60" required /><br/> 
-                <label for="direccionCliente">Dirección Postal</label><input type="text" id="direccionCliente" name="direccionCliente" maxlength="140" required /><br/> 
-                <label for="passwordCliente">Contraseña</label><input type="password" id="passwordCliente" name="passwordCliente" minlength="6" required /><br/> 
-                <button><span><i class="fa fa-plus-circle"></i>Registrar</span></button>
-            </form>
+            <button>Confirmar compra</button>
+            
+            <div class="pago">
+                <form action="servletPago">
+                    <div class="datos-cliente">
+                        <!-- Esto se rellena con los datos del cliente -->
+                    </div>
+                    <div class="datos-tarjeta">
+                        <label></label><select>
+                            <option>VISA</option>
+                            <option>MasterCard</option>
+                        </select>
+                        <label for="tjNumber">Nº de tarjeta</label><input type="text" id="tjNumber" name="tjNumber" placeholder="número de tarjeta" maxlength="16" /><br>
+                        <label for="cvvTj">CVV</label><input type="number" id="cvvTj" name="cvvTj" placeholder="CVV" min="000" max="999" /><br>
+                        <label for="mesCad">Mes de caducidad</label><input type="number" id="mesCad" name="mesCad" min="1" max="12" /><br>
+                        <label for="anoCad">Año de caducidad</label><input type="number" id="anoCad" name="anoCad" min="2016" /><br>
+                    </div>
+                    
+                    <input type="submit" name="confirmPayment" value="Confirmar pago" />
+                </form>
+            </div>
             
         </section>
         <!-- tiempo + info viaje -->
@@ -86,11 +108,12 @@
                         <br>
                         <input type="password" />
                         <br>
-                        <button>Entra<i class="fa fa-sign-in fa-2x"></i></button>
+                        <button onclick="validaUsuario(this.idUsuario.value, this.pas.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
                     </div>
                 </form>
                 <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
             </aside>
         
     </body>
+    
 </html>

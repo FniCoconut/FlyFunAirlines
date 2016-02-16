@@ -7,16 +7,14 @@ package FlyFunPackage.CONTROLLER;
 
 import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
+import FlyFunPackage.MODEL.Booking;
+import FlyFunPackage.MODEL.Card;
 import FlyFunPackage.MODEL.Client;
-import FlyFunPackage.MODEL.Flight;
 import FlyFunPackage.MODEL.Occupation;
-import FlyFunPackage.MODEL.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,16 +25,15 @@ import javax.servlet.http.HttpSession;
  *
  * @author Coconut
  */
-public class servletSeleccionVuelo extends HttpServlet {
+public class servletPago extends HttpServlet {
 
     private Connection connection;
     private ConnectionBBDD connectionBBDD;
     
-    
     @Override
     public void init() throws ServletException{
-        
-        try{
+    
+    try{
             connectionBBDD = ConnectionBBDD.GetConexion();
             connection = connectionBBDD.GetCon();
         }catch(ClassNotFoundException cnfe){  
@@ -60,33 +57,27 @@ public class servletSeleccionVuelo extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);
+            Occupation oOW = (Occupation)session.getAttribute("occupationOW");
+            Occupation oR = null;
+            if(((String)session.getAttribute("kindTrip")).equalsIgnoreCase("vuelta")){
+                oR = (Occupation)session.getAttribute("occupationR");}
+            
             Client cliente = (Client)session.getAttribute("client");
+               
+            String nifCliente = cliente.getNif();
             
-                ArrayList<Flight> _vuelosIda= (ArrayList)session.getAttribute("owFly");
-            //recogemos el vuelo necesario, el elegido
-            int idOWTrip = Integer.parseInt(request.getParameter("vueloIda"));
-            Occupation occupationOneWay = null;
+            String numTarjeta = request.getParameter("tjNumber");
+            String cvv = request.getParameter("cvvTj");
+            String mesCad = request.getParameter("mesCad");
+            String anoCad = request.getParameter("anoCad");
             
-            for(int i = 0; i < _vuelosIda.size() ; i++){
-                if(_vuelosIda.get(i).getIdFlight() == idOWTrip){ occupationOneWay = new Occupation(_vuelosIda.get(i)); }
-            }
-            session.setAttribute("occupationOW", occupationOneWay);
-            String trip = (String)session.getAttribute("kindTrip");
+            Card tjt = new Card(numTarjeta, mesCad, anoCad);
             
-            if(trip.equalsIgnoreCase("vuelta")){
-                ArrayList<Flight> _vuelosVuelta = (ArrayList)session.getAttribute("rFly");
-                int idRTrip = Integer.parseInt(request.getParameter("vueloVuelta"));
-                Occupation occupationReturn = null;
-                
-                for(int i = 0; i < _vuelosVuelta.size() ; i++){
-                    if(_vuelosVuelta.get(i).getIdFlight() == idRTrip){occupationReturn = new Occupation(_vuelosVuelta.get(i));}
-                }
-                session.setAttribute("occupationR", occupationReturn);
-            }
+            cliente.setCard(tjt);
             
+            Booking booking = new Booking(cliente,oOW, oR, (String)session.getAttribute("kindTrip"));
             
-            response.sendRedirect("pasajero.jsp");
-            
+                    new Operation().insertBooking(connection, booking);
         }
     }
 

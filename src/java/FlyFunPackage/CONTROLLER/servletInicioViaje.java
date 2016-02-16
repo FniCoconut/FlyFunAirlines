@@ -9,7 +9,9 @@ import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
 import FlyFunPackage.MODEL.AirConnect;
 import FlyFunPackage.MODEL.Airport;
+import FlyFunPackage.MODEL.Client;
 import FlyFunPackage.MODEL.Flight;
+import FlyFunPackage.MODEL.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -59,6 +61,8 @@ public class servletInicioViaje extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);
+            Client cliente = (Client)session.getAttribute("client");
+            
                 ArrayList<Airport> _origins = (ArrayList)session.getAttribute("airportsO");
                 Airport origen = null;
             ArrayList<Airport> _destinys = (ArrayList)session.getAttribute("airportsD");
@@ -111,6 +115,12 @@ public class servletInicioViaje extends HttpServlet {
             }
             
             session.setAttribute("owFly", flightTrip);
+            
+            //cargamos servicios para disponer de ellos en la siguiente pantalla
+            ArrayList<Service> servicios = new Operation().allServices(connection);
+            session.setAttribute("services", servicios);
+            //cuando hay bb se añade a la flotante
+            
             response.sendRedirect("seleccionvuelo.jsp");
         }
     }

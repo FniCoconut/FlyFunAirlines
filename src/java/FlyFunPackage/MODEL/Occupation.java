@@ -16,7 +16,7 @@ public class Occupation {
     private int idOcupation;
     private String bookingCode;
     private Flight flight;
-    private ArrayList <Passenger> passengers;
+    private ArrayList<Passenger> passengers;
     /*
     En este caso los asientos forman parte
     de los pasajeros aunque en el modelo

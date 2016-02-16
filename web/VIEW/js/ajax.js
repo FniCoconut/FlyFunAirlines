@@ -55,3 +55,51 @@ function makeSelectDestiny(){
     }
     
 }
+
+function validaUsuario(user, pass){
+    Ajax();
+    OAjax.open('POST', 'servletLogin?user='+user+'&pass='+pass, true);
+    OAjax.send();
+    OAjax.onreadystatechange = makeLogin;
+    
+}
+
+function makeLogin(){
+    
+    if(OAjax.readyState === 4 && OAjax.status === 200){
+		var str = OAjax.responseText;
+            if( str === false ){
+                document.getElementById('area-usuario').innerHTML = "-- no hay estanterías disponibles --";
+            }
+            else{
+                document.getElementById('area-usuario').innerHTML = str;
+            }
+    }
+    return false;
+}
+
+function dinamicoOD(origen, destino){
+    if(window.XMLHttpRequest){OAX = new XMLHttpRequest();}
+	else{OAX = new ActiveXObject();}
+    OAX.open('POST', 'servletOrigenDestino?o='+origen+'&d='+destino, true);
+    OAX.send();
+    OAX.onreadystatechange = function(){
+        if(OAX.readyState === 4 && OAX.status === 200){
+		var str = OAX.responseText;
+            if( str === false ){
+                document.getElementById('dinamico').innerHTML = "-- no hay estanterías disponibles --";
+            }
+            else{
+                document.getElementById('dinamico').innerHTML = str;
+            }
+    }
+    };
+}
+
+function dinamicoPasajeros(pasajero){
+    var i = 0;
+    
+    i = i+pasajero;
+    
+    document.getElementById('dinamico').appendChild(document.createTextNode("Nº de pasajeros: "+i));
+}

@@ -67,7 +67,7 @@
                         <%
                         for (int i=0; i < vuelosIda.size(); i++){
                         %>
-                        <td>
+                        <td class="flight">
                             <input type="hidden" id="vueloIda" name="vueloIda" value="<%=vuelosIda.get(i).getIdFlight() %>" />
                             <span><%=vuelosIda.get(i).getDepartureDate() %></span><br>
                             <span><%=vuelosIda.get(i).getDepartureTime() %></span><br>
@@ -99,7 +99,7 @@
                         <%
                         for (int i=0; i < vuelosVuelta.size(); i++){
                         %>
-                        <td>
+                        <td class="flight">
                             <input type="hidden" id="vueloVuelta" name="vueloVuelta" value="<%=vuelosVuelta.get(i).getIdFlight() %>" />
                             <span><%=vuelosVuelta.get(i).getDepartureDate() %></span><br>
                             <span><%=vuelosVuelta.get(i).getDepartureTime() %></span><br>
@@ -125,20 +125,24 @@
             seccion de info vuelo y tiempo
         </aside>
         
-        <aside class="usuario">
-            <form>
-                <div class="datos-usuario inicio-sesion">
-                    <label for="id-usuario">Nombre de usuario</label>
-                    <br>
-                    <input type="text" id="id-usuario"/>
-                    <br><br>
-                    <label for="pass-usuario">Contraseña</label>
-                    <br>
-                    <input type="password" />
-                </div>
-            </form>
-        </aside>
-        <!-- Pie de página -->
+        <section class="pantalla-usuario" id="pantalla-usuario">
+        </section>    
+            <aside class="usuario" id="area-usuario">
+                <form action="" class="formulario-cliente">
+                    <div class="datos-usuario inicio-sesion">
+                        <label for="id-usuario">Nombre de usuario</label>
+                        <br>
+                        <input type="text" id="id-usuario"/>
+                        <br><br>
+                        <label for="pass-usuario">Contraseña</label>
+                        <br>
+                        <input type="password" />
+                        <br>
+                        <button onclick="validaUsuario(idUsuario.value, pass.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
+                    </div>
+                </form>
+                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+            </aside>
         
     </body>
 </html>

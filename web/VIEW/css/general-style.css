@@ -31,16 +31,7 @@
     width: 100%;
 }
 
-.acceso-usuario{
-    height: 80px;
-    float: right;
-    width: 50px;
-}
 
-.acceso-usuario>i{
-    position: relative;
-    margin-top: 40px;
-}
 
 .logo > img {
     float: left;
@@ -68,34 +59,20 @@
 .info {
     float: left;
     margin-top: 100px;
-    height: 550px;
 }
 
 aside.info {
     width: 180px;
     height: 100%!important;
     background-color: green;
+    height: 550px;
 }
 
 section.info {
     width: calc(100% - 360px);
     margin-bottom: 10px;
     overflow: auto;
-}
-
-.usuario{
-    background-color: rgba(89, 45, 95, 0.45);
-    height: 100%;
-    width: 100%;
-    position: fixed;
-}
-
-.usuario-action{
-    position: absolute;
-    right: 0px;
-    background-color: red;
-    display: block;
-    transition: 500ms;
+    height: 550px;
 }
 
 .formulario-viaje{
@@ -155,14 +132,36 @@ section.info {
     background-color: red;
 }
 
+.acceso-usuario{
+    height: 80px;
+    float: right;
+    width: 50px;
+}
+
+.acceso-usuario>i{
+    position: relative;
+    margin-top: 40px;
+}
+
 .pantalla-usuario{
     background-color: rgba(89, 45, 95, 0.45);
     height: 100%;
     width: 100%;
     position: fixed;
+    display: none;
 }
 
-.inicio-sesion{
+.usuario{
+    background-color: #aaa;
+    height: 100%;
+    width: 250px;
+    text-align: center;
+    position: fixed;
+    right: 0;
+    display:none;
+}
+
+.formulario-cliente{
     position:relative;
     top: 250px;
     right:0px;
@@ -174,4 +173,77 @@ footer{
     position: fixed;
     bottom: 0;
     background-color: #4e4e4e;
+}
+
+.adulto, .nino, .bebe{
+    width: 100%;
+    height: 100%;
+    float: left;
+}
+
+.formulario-pasajero, .servicios{
+    width: 50%;
+    height: 105px;
+    float: left;
+}
+
+.serv-ida, .serv-vuelta{
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+.pasajeros-servicio, .airplane-schema{
+    width: 50%;
+    float: left;
+}
+
+.pasajero, .datos-pasajero{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.datos-pasajero{
+    display:none;
+}
+
+.airplane-style{
+    min-width: 100%;
+    text-align: center;
+}
+
+.asientos-viaje-vuelta{
+    width:100%;
+    height: 100%;
+    float: left;
+    margin-top: 10px;
+}
+
+.seat{
+    cursor: pointer;
+}
+
+.pasillo{
+    width:40px;
+}
+
+.popUp{
+    background-color: rgba(89, 45, 95, 0.45);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 20;
+}
+
+.container-popup{
+    width: 200px;
+    height: 100px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    text-align: center;
+    margin-top: calc((50% - 100px) / 2 );
+    background-color: #aaa;
 }
