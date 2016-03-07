@@ -7,14 +7,13 @@ package FlyFunPackage.CONTROLLER;
 
 import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
-import FlyFunPackage.MODEL.Booking;
-import FlyFunPackage.MODEL.Card;
 import FlyFunPackage.MODEL.Client;
-import FlyFunPackage.MODEL.Occupation;
+import FlyFunPackage.MODEL.Flight;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,15 +24,16 @@ import javax.servlet.http.HttpSession;
  *
  * @author Coconut
  */
-public class servletPago extends HttpServlet {
+public class servletCheckIn extends HttpServlet {
 
     private Connection connection;
     private ConnectionBBDD connectionBBDD;
     
+    
     @Override
     public void init() throws ServletException{
-    
-    try{
+        
+        try{
             connectionBBDD = ConnectionBBDD.GetConexion();
             connection = connectionBBDD.GetCon();
         }catch(ClassNotFoundException cnfe){  
@@ -41,6 +41,7 @@ public class servletPago extends HttpServlet {
         catch(SQLException sqle){
         }
     }
+    
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -57,34 +58,20 @@ public class servletPago extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);
-            Occupation oOW = (Occupation)session.getAttribute("occupationOW");
-            Occupation oR = null;
-            Booking booking = (Booking)session.getAttribute("booking");
-                        
-            Client cliente = (Client)session.getAttribute("client");
-               
-            String nifCliente = cliente.getNif();
+            Client cliente = (Client)request.getAttribute("cliente");
             
-            String numTarjeta = request.getParameter("tjNumber");
-            String cvv = request.getParameter("cvvTj");
-            int mesCad = Integer.parseInt(request.getParameter("mesCad"));
-            int anoCad = Integer.parseInt(request.getParameter("anoCad"));
+            String booking = request.getParameter("bk_code");
+            String nif = request.getParameter("nifCliente");
+            String eMail = request.getParameter("mailCliente");
             
-            Card tjt = new Card(numTarjeta, mesCad, anoCad);
+            ArrayList<Flight> vuelos = new Operation().getFlightCheckIn(connection, booking, nif, eMail);
+            //esto devuelve el array de vuelos
             
-            cliente.setCard(tjt);
             
-            if(((String)session.getAttribute("kindTrip")).equalsIgnoreCase("vuelta")){
-                //oR = (Occupation)session.getAttribute("occupationR");
-                booking.setClient(cliente);
-                booking.priceCalc();
-            }else{
-                booking.setClient(cliente);
-                booking.priceCalc();
-            }
             
-                    new Operation().insertBooking(connection, booking, (String)session.getAttribute("kindTrip"));
-                    response.sendRedirect("index.html");
+            session.setAttribute("checkFlights", vuelos);
+            session.setAttribute("bkcode", booking);
+            response.sendRedirect("VueloCheckIn.jsp");
         }
     }
 

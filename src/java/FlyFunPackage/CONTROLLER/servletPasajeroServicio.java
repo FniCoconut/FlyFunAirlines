@@ -1,5 +1,7 @@
 package FlyFunPackage.CONTROLLER;
 
+import FlyFunPackage.DAO.ConnectionBBDD;
+import FlyFunPackage.DAO.Operation;
 import FlyFunPackage.MODEL.Client;
 import FlyFunPackage.MODEL.Flight;
 import FlyFunPackage.MODEL.Occupation;
@@ -7,6 +9,8 @@ import FlyFunPackage.MODEL.Passenger;
 import FlyFunPackage.MODEL.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +24,22 @@ import javax.servlet.http.HttpSession;
  */
 public class servletPasajeroServicio extends HttpServlet {
 
+    private Connection connection;
+    private ConnectionBBDD connectionBBDD;
+        
+    @Override
+    public void init() throws ServletException{
+        
+        try{
+            connectionBBDD = ConnectionBBDD.GetConexion();
+            connection = connectionBBDD.GetCon();
+        }catch(ClassNotFoundException cnfe){  
+                }
+        catch(SQLException sqle){
+        }
+    }
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -36,7 +56,7 @@ public class servletPasajeroServicio extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);
             Client cliente = (Client)session.getAttribute("client");
-            
+            ArrayList asientos = new ArrayList();
             ArrayList<Passenger> pasajeros = new ArrayList();
             ArrayList<Service> servicios;
             
@@ -102,7 +122,7 @@ public class servletPasajeroServicio extends HttpServlet {
                 for(int j=0 ;j<pasajeros.size();j++){
                     if(pasajeros.get(j).getNif().equalsIgnoreCase(adultoCargo)){
                     bebe = new Passenger(nif, null, name, surname, null, "bebe", pasajeros.get(j));
-                    
+                    pasajeros.get(j).getServices().add(new Service("Infante"));
                     }
                 }
                 pasajeros.add(bebe);
@@ -110,7 +130,8 @@ public class servletPasajeroServicio extends HttpServlet {
             
             //session.setAttribute("passengerOW", pasajeros);
             OOW.setPassengers(pasajeros);
-            
+            asientos = new Operation().getOccupation(connection, OOW.getFlight());
+            session.setAttribute("ocupadosIda", asientos);
             // --> DATOS DE VUELTA <--
             if (((String)session.getAttribute("kindTrip")).equals("vuelta")){
                 
@@ -154,7 +175,7 @@ public class servletPasajeroServicio extends HttpServlet {
                 String seguro = request.getParameter("seguroNinoV"+i);
                 if( !(seguro == null)){ serviciosVuelta.add(new Service(seguro)); }
                 
-                Passenger nino = new Passenger(nif, null, name, surname, email, "niño", serviciosVuelta);
+                Passenger nino = new Passenger(nif, "niño", name, surname, email, "niño", serviciosVuelta);
                 pasajerosVuelta.add(nino);
             }
             
@@ -168,7 +189,7 @@ public class servletPasajeroServicio extends HttpServlet {
                 
                 for(int j=0 ;j<pasajeros.size();j++){
                     if(pasajeros.get(j).getNif().equalsIgnoreCase(adultoCargo)){
-                    bebe = new Passenger(nif, null, name, surname, null, "bebe", pasajeros.get(j));
+                    bebe = new Passenger(nif, "bebe", name, surname, null, "bebe", pasajeros.get(j));
                     }
                 }
                 pasajerosVuelta.add(bebe);
@@ -181,15 +202,18 @@ public class servletPasajeroServicio extends HttpServlet {
                 
                 Occupation OR = (Occupation)session.getAttribute("occupationR");
                 OR.setPassengers(pasajerosVuelta );
+                
+                asientos = new Operation().getOccupation(connection, OR.getFlight());
+                session.setAttribute("ocupadosVuelta", asientos);
             }
             
             if(((String)session.getAttribute("kindTrip")).equals("vuelta")){//el viaje es de ida y vuelta
                 if ( asiento != 0 || asientoV != 0){response.sendRedirect("revisionServicios.jsp");}//se ha elegido al menos un servicio asiento
-                else{response.sendRedirect("pago.jsp");}//no se ha seleccionado servicio asiento
+                else{response.sendRedirect("servletRevisionServicios");}//no se ha seleccionado servicio asiento
             }
             else{
                 if ( asiento != 0){response.sendRedirect("revisionServicios.jsp");}//se ha seleccionado al menos un servicio asiento
-                else{response.sendRedirect("pago.jsp");}//no se ha seleccionado servicio asiento
+                else{response.sendRedirect("servletRevisionServicios");}//no se ha seleccionado servicio asiento
             }
             
             

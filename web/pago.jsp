@@ -4,6 +4,12 @@
     Author     : Coconut
 --%>
 
+<%@page import="FlyFunPackage.MODEL.Card"%>
+<%@page import="FlyFunPackage.MODEL.Service"%>
+<%@page import="FlyFunPackage.MODEL.Passenger"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="FlyFunPackage.MODEL.Occupation"%>
+<%@page import="FlyFunPackage.MODEL.Booking"%>
 <%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -16,7 +22,8 @@
         <!-- Libreria de jQuery compatible con IE -->
         <script src="VIEW/js/canvas.js"></script>
         <!-- Canvas de mapa imagen -->
-        <script src="VIEW/js/funciones-control.js"></script>
+        <script src="VIEW/js/funciones-control.js"></script> 
+        <script src="VIEW/js/funciones-usuario.js"></script> 
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
@@ -24,6 +31,8 @@
         <!-- Lireria de jQuery User Interface -->
         <link href="VIEW/css/general-style.css" rel="stylesheet"/>
         <!-- Estilo general, lyout -->
+        <link rel="stylesheet" href="VIEW/fonts/Fuente/stylesheet.css" type="text/css" charset="utf-8" />
+        <!-- Fuente -->
         <link href="VIEW/fonts/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
         <!-- Libreria de FontAwesome -->
         <link rel="stylesheet" href="VIEW/jquery-ui/jquery-ui.min.css">
@@ -33,14 +42,23 @@
     <body>
         <%
             //HttpSession session = request.getSession(true);
+            Booking reserva = (Booking)session.getAttribute("booking");
             Client cliente = (Client)session.getAttribute("client");
+            
+            Occupation ida = reserva.getIda();
+            ArrayList<Passenger> pasajeros = ida.getPassengers();
+                
             if(cliente == null){
               %>
               <script>
-                 // popUpCliente();
-                 alert("<%=cliente.getName() %>");
+                  popUpCliente();
+                 //alert("");
               </script>
               <%
+            }else{ Card crd = cliente.getCard(); 
+            %>
+            <script> userLogged() </script>
+            <%
             }
         %> 
               
@@ -63,8 +81,66 @@
                            
         
         <section class="info centro">
-            <div class="billetes">
-                <!-- Aquí se mostrarán los billetes por pasajero -->
+            <div class="resumen-reserva">
+                <div class="resumen-viaje-ida">
+                <div class="resumen-vuelo">
+                    <span>Código de vuelo: <%=ida.getFlight().getNumFlight() %></span>
+                </div>
+                <% 
+                for ( int i=0 ; i<pasajeros.size() ; i++){
+                %>
+                
+                <div class="resumen-pasajero">
+                    <span>Pasajero: <%=pasajeros.get(i).getName()%>, <%=pasajeros.get(i).getSurname()%></span>
+                    <%if(pasajeros.get(i).getServices() != null){
+                        %>
+                        <div class="resumen-pasajero-servicios">
+                        <span>Servicios:</span><br>
+                        <%
+                        ArrayList<Service> servicios = pasajeros.get(i).getServices();
+                        for(int j=0 ; j<servicios.size() ; j++){ %>
+                    
+                        <span><%=servicios.get(j).getDenomination()%> : <%=servicios.get(j).getDescription()%> , <%=servicios.get(j).getFrecio()%>€</span>
+                    </div>
+                        <%}
+                    }%>
+                </div>
+                <%
+                }
+                %>
+                </div>
+                <% 
+            Occupation vuelta = reserva.getVuelta();
+            if ( vuelta != null){
+            ArrayList<Passenger> pasajerosVuelta = vuelta.getPassengers();
+                             %>
+                <div class="resumen-viaje-vuelta">
+                   <% 
+                for ( int i=0 ; i<pasajerosVuelta.size() ; i++){
+                %>
+                <div class="resumen-vuelo">
+                    <span>Código de vuelo: <%=vuelta.getFlight().getNumFlight() %></span>
+                </div>
+                <div class="resumen-pasajero">
+                    <span>Pasajero: <%=pasajerosVuelta.get(i).getName()%>, <%=pasajerosVuelta.get(i).getSurname()%></span>
+                    <%if(pasajerosVuelta.get(i).getServices() != null){
+                        %>
+                        <div class="resumen-pasajero-servicios">
+                        <span>Servicios:</span><br>
+                        <%
+                        ArrayList<Service> servicios = pasajerosVuelta.get(i).getServices();
+                        for(int j=0 ; j<servicios.size() ; j++){ %>
+                    
+                        <span><%=servicios.get(j).getDenomination()%> : <%=servicios.get(j).getDescription()%> , <%=servicios.get(j).getFrecio()%>€</span>
+                    </div>
+                        <%}
+                    }%>
+                </div>
+                <%
+                }
+                %> 
+                </div>
+                <% } %>
             </div>
             
             <button>Confirmar compra</button>
@@ -98,20 +174,11 @@
         <section class="pantalla-usuario" id="pantalla-usuario">
         </section>    
             <aside class="usuario" id="area-usuario">
-                <form action="" class="formulario-cliente">
-                    <div class="datos-usuario inicio-sesion">
-                        <label for="id-usuario">Nombre de usuario</label>
-                        <br>
-                        <input type="text" id="id-usuario"/>
-                        <br><br>
-                        <label for="pass-usuario">Contraseña</label>
-                        <br>
-                        <input type="password" />
-                        <br>
-                        <button onclick="validaUsuario(this.idUsuario.value, this.pas.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
-                    </div>
-                </form>
-                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+                <div id="head-aside" class="head-aside"></div>
+                <div class="btn-inicio" onclick="inicioSesion()"><span>Inicia sesión</span></div>
+                <div class="btn-inicio" onclick="registro()"><span>Nuevo usuario</span></div>
+                <div class="btn-inicio" onclick="facturar()"><span>Check - in</span></div>
+               
             </aside>
         
     </body>

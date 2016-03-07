@@ -5,6 +5,8 @@
  */
 package FlyFunPackage.MODEL;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Coconut
@@ -21,6 +23,7 @@ public class Client {
     private String adress;
     private String password;
     private Card card;
+    private ArrayList<Booking> bookingList;
 
     
     public Client(){

@@ -3,6 +3,7 @@
     Created on : 23-dic-2015, 19:36:25
     Author     : Coconut
 --%>
+<%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -15,15 +16,19 @@
         <script src="VIEW/js/canvas.js"></script>
         <!-- Canvas de mapa imagen -->
         <script src="VIEW/js/funciones-control.js"></script>
+        <script src="VIEW/js/funciones-usuario.js"></script>
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
         <script src="VIEW/jquery-ui/jquery-ui.min.js"></script>
         <!-- Lireria de jQuery User Interface -->
         <link href="VIEW/css/general-style.css" rel="stylesheet"/>
+        <link href="VIEW/css/style1.css" rel="stylesheet"/>
         <!-- Estilo general, lyout -->
         <link href="VIEW/fonts/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
         <!-- Libreria de FontAwesome -->
+        <link rel="stylesheet" href="VIEW/fonts/Fuente/stylesheet.css" type="text/css" charset="utf-8" />
+        <!-- Fuente -->
         <link rel="stylesheet" href="VIEW/jquery-ui/jquery-ui.min.css">
         <!-- Estilos de la librería jQ -->
         
@@ -60,6 +65,7 @@
     </head>
     
     <body onload="loadOrigin()">
+        
         <!-- Cabecera -->  
         <header class="header-bar">
             <div class="logo">
@@ -72,7 +78,14 @@
         
         <!-- tiempo + redes -->
         <aside class="info izquierda">
-            seccion de redes y tiempo
+            <div id="weather-origin">
+                <a class="aw-widget-legal"></a>
+                <div id="awcc1455910518006" class="aw-widget-current"  data-locationkey="308526" data-unit="c" data-language="es" data-useip="false" data-uid="awcc1455910518006"></div>
+                <script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
+            </div>
+            <div id="twitter"><a class="twitter-timeline" href="https://twitter.com/mss_Fanni" data-widget-id="700738019196669952">Tweets por @mss_Fanni.</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
         </aside>
         
         <!-- Formulario Viaje -->
@@ -83,18 +96,18 @@
             </div>
                     
             <form action="servletInicioViaje" class="formulario-viaje">
-                <input type="submit" class="btn-siguiente" value=">" />
+                <button class="btn-siguiente"><i class="fa fa-paper-plane"></i></button>
             
                 <div class="estilo-origen">
-                    <label for="origen">ORIGEN</label>
-                    <select name="origen" id="origen" required onchange="loadDestiny(this.value)">
-                        <option>-Selecciona origen-</option>
+                    <label class="lbl-origen" for="origen">ORIGEN</label>
+                    <select class="slc-origen" name="origen" id="origen" required onchange="loadDestiny(this.value)">
+                        <option>-Selecciona el origen-</option>
                     </select>
                 </div>
                 <div class="estilo-destino">
-                    <label for="destino">DESTINO</label>
-                    <select name="destino" id="destino" required onchange="dinamicoOD(origen.value, this.value)">
-                        <option>-Selecciona destino-</option>
+                    <label class="lbl-destino" for="destino">DESTINO</label>
+                    <select class="slc-destino" name="destino" id="destino" required onchange="dinamicoOD(origen.value, this.value)">
+                        <option>-Selecciona el destino-</option>
                     </select>
                 </div>
                 <div class="tipo-viaje">
@@ -105,13 +118,13 @@
                 <div class="datos-ida">
                     <div class="pasajeros">
                         <label for="adulto">ADULTOS</label>
-                        <input type="number" name="adulto" id="adulto" min="1" max="10" required onchange="dinamicoPasajeros(this.value)" />
+                        <input type="number" name="adulto" id="adulto" min="1" max="10" required class="inp-inicio"/>
                         
                         <label for="joven">JÓVENES</label>
-                        <input type="number" name="joven" id="joven" min="0" value="0" onchange="dinamicoPasajeros(this.value)"/>
+                        <input type="number" name="joven" id="joven" min="0" value="0" class="inp-inicio"/>
                     
                         <label for="bebe">BEBES</label>
-                        <input type="number" name="bebe" id="bebe" min="0" value="0" onchange="dinamicoPasajeros(this.value)"/>
+                        <input type="number" name="bebe" id="bebe" min="0" value="0" class="inp-inicio"/>
                     
                     </div>
                     <br>
@@ -120,7 +133,7 @@
                 </div>
                 <div class="datos-vuelta" id="datos-vuelta">
                     <label for="fecha-salida">FECHA VUELTA</label>
-                    <input type="date" id="fecha-vuelta" name="f_vuelta"  required/>
+                    <input type="date" id="fecha-vuelta" name="f_vuelta" required/>
                 </div>
                 
             </form>
@@ -128,32 +141,41 @@
         </section>
         <!-- tiempo + info viaje -->
         <aside class="info derecha">
-            seccion de info vuelo y tiempo
-            <div id="dinamico" class="info vuelo">
-                
+            <div id="weather-destiny">
+                <a class="aw-widget-legal"></a>
+                <div id="awcc1455910426981" class="aw-widget-current"  data-locationkey="623" data-unit="c" data-language="es" data-useip="false" data-uid="awcc1455910426981"></div>
+                <script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
+            </div>
+            <div id="dinamico" class="vuelo">
+                <div id="airports"></div>
+                <h1 class="separador"></h1>
+                <div id="passengers">
+                    
+                </div>
+                <div id="flight"></div>
+                <div id="price"></div>                    
             </div>
         </aside>
         
         <section class="pantalla-usuario" id="pantalla-usuario">
         </section>    
            <aside class="usuario" id="area-usuario">
-                <form action="" class="formulario-cliente">
-                    <div class="datos-usuario inicio-sesion">
-                        <label for="idUsuario">Nombre de usuario</label>
-                        <br>
-                        <input type="email" id="idUsuario"/>
-                        <br><br>
-                        <label for="pass">Contraseña</label>
-                        <br>
-                        <input type="password" id="pass"/>
-                        <br>
-                        <button onclick="validaUsuario(idUsuario.value, pass.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
-                    </div>
-                </form>
-                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+                <div id="head-aside" class="head-aside"></div>
+                <div class="btn-inicio" onclick="inicioSesion()"><span>Inicia sesión</span></div>
+                <div class="btn-inicio" onclick="registro()"><span>Nuevo usuario</span></div>
+                <div class="btn-inicio" onclick="facturar()"><span>Check - in</span></div>
+               
             </aside>
         
         <!-- Pie de página -->
-        
+        <%
+            Client cliente = (Client)session.getAttribute("client");
+            if(cliente != null){
+                %>
+                
+            <script> userLogged(); </script>
+                <%
+            }
+            %>
     </body>
 </html>

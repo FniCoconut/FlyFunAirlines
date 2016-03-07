@@ -31,6 +31,11 @@ public class AirConnect {
         this.termOrigin = null;
     }
     
+    public AirConnect(){
+        this.idConnection = 0;
+        this.termDestiny = null;
+        this.termOrigin = null;        
+    }
     // --> SETTERS & GETTERS
 
     public int getIdConnection() {
@@ -55,6 +60,14 @@ public class AirConnect {
 
     public void setTermDestiny(Airport termDestiny) {
         this.termDestiny = termDestiny;
+    }
+    
+    public void setTerminal(Airport a){
+        if(this.termOrigin == null){
+            this.termOrigin = a;
+        }else{
+            this.termDestiny = a;
+        }
     }
     
     // --> TO STRING & CLONE

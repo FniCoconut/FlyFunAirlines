@@ -4,6 +4,7 @@
     Author     : Coconut
 --%>
 
+<%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page import="FlyFunPackage.MODEL.Service"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -18,21 +19,26 @@
         <script src="VIEW/js/canvas.js"></script>
         <!-- Canvas de mapa imagen -->
         <script src="VIEW/js/funciones-control.js"></script>
+        <script src="VIEW/js/funciones-usuario.js"></script>
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
         <script src="VIEW/jquery-ui/jquery-ui.min.js"></script>
         <!-- Lireria de jQuery User Interface -->
         <link href="VIEW/css/general-style.css" rel="stylesheet"/>
+        <link href="VIEW/css/style1.css" rel="stylesheet"/>
         <!-- Estilo general, lyout -->
         <link href="VIEW/fonts/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
         <!-- Libreria de FontAwesome -->
+        <link rel="stylesheet" href="VIEW/fonts/Fuente/stylesheet.css" type="text/css" charset="utf-8" />
+        <!-- Fuente -->
         <link rel="stylesheet" href="VIEW/jquery-ui/jquery-ui.min.css">
         <!-- Estilos de la librería jQ -->
        
     </head>
     
     <body>
+        
         <!-- Cabecera -->
         <%
         int adult = (int)session.getAttribute("adult");
@@ -59,11 +65,14 @@
         <section class="info centro">
         
             <form action="servletPasajeroServicio" class="formulario-viaje">
+                <div class="contenedor-pasajeros">
                 <div class="adulto">
                 <% 
                 for(int i=0 ; i<adult ; i++ ){
                 %>
                     <div class="formulario-pasajero">
+                        
+                        <span class="title-pasajero">Adulto <%=i+1%></span><br>
                         <label for="prefix">PREFIJO</label>
                         <select id="prefix" name="prefix<%=i%>">
                             <option>- Selecciona -</option>
@@ -92,15 +101,19 @@
                         </div>
                         <%  }  %>
                     </div>
+                    
                 <%
                 }
                 %>
                 </div> 
+                
                 <div class="nino">
                 <% 
                 for(int i=0 ; i<child ; i++ ){
                 %>
+                
                     <div class="formulario-pasajero"><br/>
+                <span class="title-pasajero">Niño <%=i+1%></span><br>
                         <label for="nameNino">NOMBRE</label><input type="text" name="nameNino<%=i%>" /><br/>
                         <label for="surnameNino">APELLIDOS</label><input type="text" name="surnameNino<%=i%>" /><br/>
                         <label for="nifNino">NIF</label><input type="text" name="nifNino<%=i%>" /><br/>
@@ -122,21 +135,25 @@
                         </div>
                         <%  }  %>
                     </div>
+                    
                 <%
                 }
                 %>
                 </div> 
+                
                 <div class="bebe">
                 <% 
                 for(int i=0 ; i<infant ; i++ ){
                 %>
+                
                 <div class="formulario-pasajero">
+                <span class="title-pasajero">Bebé <%=i+1%></span><br>
                     <label for="nameBebe">NOMBRE</label><input type="text" name="nameBebe<%=i%>" id="nameBebe"/><br/>
                     <label for="surnameBebe">APELLIDOS</label><input type="text" name="surnameBebe<%=i%>" id="surnameBebe"/><br/>
                     <label for="nifBebe">NIF</label><input type="text" name="nifBebe<%=i%>" id="nifBebe"/><br/>
                     
-                    <label for="adultoCargo">ADULTO A CARGO</label>
-                    <select id="adultoCargo" name="adultoCargo<%=i%>" >
+                    <label for="bebe<%=i%>">ADULTO A CARGO</label>
+                    <select id="bebe<%=i%>" class="adultoCargo" onclick="adultoCargo(this.id)" name="adultoCargo<%=i%>" >
                         <option>-Selecciona adulto a cargo-</option>
                     </select>
                 </div> 
@@ -144,7 +161,8 @@
                 }
                 %>
                 </div>
-                <input type="submit" class="btn-siguiente" value=">" />
+                </div>
+                <button class="btn-siguiente"><i class="fa fa-paper-plane"></i></button>
             
                 
             </form>
@@ -158,20 +176,20 @@
         <section class="pantalla-usuario" id="pantalla-usuario">
         </section>    
             <aside class="usuario" id="area-usuario">
-                <form action="" class="formulario-cliente">
-                    <div class="datos-usuario inicio-sesion">
-                        <label for="id-usuario">Nombre de usuario</label>
-                        <br>
-                        <input type="text" id="id-usuario"/>
-                        <br><br>
-                        <label for="pass-usuario">Contraseña</label>
-                        <br>
-                        <input type="password" />
-                        <br>
-                        <button onclick="validaUsuario(this.idUsuario.value, this.pas.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
-                    </div>
-                </form>
-                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+                <div id="head-aside" class="head-aside"></div>
+                <div class="btn-inicio" onclick="inicioSesion()"><span>Inicia sesión</span></div>
+                <div class="btn-inicio" onclick="registro()"><span>Nuevo usuario</span></div>
+                <div class="btn-inicio" onclick="facturar()"><span>Check - in</span></div>
+               
             </aside>
+        <%
+            Client cliente = (Client)session.getAttribute("client");
+            if(cliente != null){
+                %>
+                
+            <script> userLogged(); </script>
+                <%
+            }
+            %>
     </body>
 </html>

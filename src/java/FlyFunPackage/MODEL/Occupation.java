@@ -50,6 +50,13 @@ public class Occupation {
         this.flight = flight;
         this.passengers = passengers;
     }
+    
+    public Occupation ( String bookingCode, Flight flight, ArrayList<Passenger> passengers){
+        this.idOcupation = 0;
+        this.bookingCode = bookingCode;
+        this.flight = flight;
+        this.passengers = passengers;
+    }
 
     public int getIdOcupation() {
         return idOcupation;

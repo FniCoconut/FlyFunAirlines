@@ -40,6 +40,26 @@
         <servlet-name>servletOrigenDestino</servlet-name>
         <servlet-class>FlyFunPackage.CONTROLLER.servletOrigenDestino</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>servletCheckIn</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletCheckIn</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletCheckInVuelo</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletCheckInVuelo</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletCheckInPasajero</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletCheckInPasajero</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletAterrizado</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletAterrizado</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletAsientos</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletAsientos</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>servletOrigen</servlet-name>
         <url-pattern>/servletOrigen</url-pattern>
@@ -79,6 +99,26 @@
     <servlet-mapping>
         <servlet-name>servletOrigenDestino</servlet-name>
         <url-pattern>/servletOrigenDestino</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletCheckIn</servlet-name>
+        <url-pattern>/servletCheckIn</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletCheckInVuelo</servlet-name>
+        <url-pattern>/servletCheckInVuelo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletCheckInPasajero</servlet-name>
+        <url-pattern>/servletCheckInPasajero</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletAterrizado</servlet-name>
+        <url-pattern>/servletAterrizado</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletAsientos</servlet-name>
+        <url-pattern>/servletAsientos</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

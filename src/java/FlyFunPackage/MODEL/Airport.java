@@ -20,8 +20,19 @@ public class Airport implements Cloneable{
     private String term;
     private String city;
     private String country;
+    private int key;
 
     // --> CONSRUCTOR CON TODOOS LOS DATOS.
+    public Airport(int idAirport, String iata, String name, String term, String city, String country, int key) {
+        this.idAirport = idAirport;
+        this.iata = iata;
+        this.name = name;
+        this.term = term;
+        this.city = city;
+        this.country = country;
+        this.key = key;
+    }
+
     public Airport(int idAirport, String iata, String name, String term, String city, String country) {
         this.idAirport = idAirport;
         this.iata = iata;
@@ -40,8 +51,17 @@ public class Airport implements Cloneable{
         this.country = "";
     }
     
-    // --> SETTERS & GETTERS
+   
 
+    // --> SETTERS & GETTERS
+    public void setKey(int key) {
+        this.key = key;
+    }
+    
+    public int getKey() {
+        return key;
+    }
+ 
     public int getIdAirport() {
         return idAirport;
     }

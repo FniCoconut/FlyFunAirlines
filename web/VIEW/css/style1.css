@@ -8,3 +8,80 @@ and open the template in the editor.
     Author     : Coconut
 */
 
+/*inicioviaje.jsp*/
+
+
+/*seleccionvuelo.jsp*/
+
+.seleccionado{
+    color:#4A148C;
+    background-color:#68efad;
+    transition: 500ms;
+}
+
+.header-vuelo, .header-asiento{
+    float: left;
+    margin: 5px;
+    margin-top: 10px;
+    color:#4A148C;
+    text-align: center;
+    width: calc(100% - 10px);
+    font-size: 1.4em;
+}
+
+.btn-volver{
+    background-color: #68efad;
+    color:#4A148C;
+    padding: 10px;
+    width: 22%;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.oferta-vuelo{
+    margin-top: 25px;
+    width: 100%;
+    text-align: center;
+}
+
+.separador{
+    height: 1px;
+    width: 80%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color:rgba(204, 204, 204, 0.6);
+}
+
+/*pasajero.jsp*/
+
+.serv-ida>label, .serv-vuelta>label, .title-pasajero{
+    margin-bottom: 10px;
+    font-size: 1.1em!important;
+    font-variant-caps: small-caps;
+    color:#4A148C;
+}
+
+.formulario-pasajero{
+    margin-bottom: 10px;
+}
+
+.contenedor-pasajeros{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 470px;
+}
+/*revisionservicios.jsp*/
+
+
+
+/*checkin.jsp*/
+.check-in{text-align: center;}
+
+.check-in>input{
+    width: 180px;
+}

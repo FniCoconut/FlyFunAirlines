@@ -7,14 +7,13 @@ package FlyFunPackage.CONTROLLER;
 
 import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
-import FlyFunPackage.MODEL.Booking;
-import FlyFunPackage.MODEL.Card;
-import FlyFunPackage.MODEL.Client;
 import FlyFunPackage.MODEL.Occupation;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,15 +24,16 @@ import javax.servlet.http.HttpSession;
  *
  * @author Coconut
  */
-public class servletPago extends HttpServlet {
+public class servletAsientos extends HttpServlet {
 
     private Connection connection;
     private ConnectionBBDD connectionBBDD;
     
+    
     @Override
     public void init() throws ServletException{
-    
-    try{
+        
+        try{
             connectionBBDD = ConnectionBBDD.GetConexion();
             connection = connectionBBDD.GetCon();
         }catch(ClassNotFoundException cnfe){  
@@ -57,34 +57,23 @@ public class servletPago extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);
-            Occupation oOW = (Occupation)session.getAttribute("occupationOW");
-            Occupation oR = null;
-            Booking booking = (Booking)session.getAttribute("booking");
-                        
-            Client cliente = (Client)session.getAttribute("client");
-               
-            String nifCliente = cliente.getNif();
+            ArrayList asientos = new ArrayList();
+            ArrayList asientosV = new ArrayList();
+            ArrayList total = new ArrayList();
             
-            String numTarjeta = request.getParameter("tjNumber");
-            String cvv = request.getParameter("cvvTj");
-            int mesCad = Integer.parseInt(request.getParameter("mesCad"));
-            int anoCad = Integer.parseInt(request.getParameter("anoCad"));
+            Gson g = new Gson();
             
-            Card tjt = new Card(numTarjeta, mesCad, anoCad);
-            
-            cliente.setCard(tjt);
-            
-            if(((String)session.getAttribute("kindTrip")).equalsIgnoreCase("vuelta")){
-                //oR = (Occupation)session.getAttribute("occupationR");
-                booking.setClient(cliente);
-                booking.priceCalc();
-            }else{
-                booking.setClient(cliente);
-                booking.priceCalc();
+            Occupation OOW = (Occupation)session.getAttribute("occupationOW");
+                asientos = new Operation().getOccupation(connection, OOW.getFlight());
+                total.add(asientos);
+            if (((String)session.getAttribute("kindTrip")).equals("vuelta")){
+                
+            Occupation OR = (Occupation)session.getAttribute("occupationR");
+                asientosV = new Operation().getOccupation(connection, OR.getFlight());
+                total.add(asientosV);
             }
             
-                    new Operation().insertBooking(connection, booking, (String)session.getAttribute("kindTrip"));
-                    response.sendRedirect("index.html");
+            out.print(g.toJson(total));
         }
     }
 

@@ -58,7 +58,7 @@ public class servletLogin extends HttpServlet {
             
             Client client = new Operation().loginClient(connection, user, pass);
             
-            session.setAttribute("client", client);
+                session.setAttribute("client", client);
             
             out.print("<h1>"+client.getSurname()+" "+client.getName()+"</h1>");
             

@@ -97,3 +97,86 @@ public class servletPasajeroServicio extends HttpServlet {
 
 
 El prefijo también delata la financiera de la que depende la tarjeta. Se puede deducir que las que empiezan por 4 las designa VISA, las que lo hacen por 51 o 55 las entrega MasterCard o las que comienzan por 34 y 37 son de American Express, entre otros.
+
+*********************************************************
+
+<section class="pantalla-usuario" id="pantalla-usuario">
+        </section>    
+           <aside class="usuario" id="area-usuario">
+                <form action="" class="formulario-cliente">
+                    <div class="datos-usuario inicio-sesion">
+                        <label for="idUsuario">Nombre de usuario</label>
+                        <br>
+                        <input type="email" id="idUsuario"/>
+                        <br><br>
+                        <label for="pass">Contraseña</label>
+                        <br>
+                        <input type="password" id="pass"/>
+                        <br>
+                        <button onclick="validaUsuario(idUsuario.value, pass.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
+                    </div>
+                </form>
+                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+            </aside>
+
+********************************************
+
+    public ArrayList<Passenger> getOccupationBooked(Connection _connection, String bk){
+//        int idP=0;
+//        ArrayList<Passenger> pasajerosCheckin = new ArrayList();
+//        try {
+//            String pasajeroServicio = "select p.*, s.* from flyfunairlines.passenger p, flyfunairlines.service s where p.ID_PASSENGER in \n" +
+//                    "(select PASAJERO from flyfunairlines.occupation where BOOKING_CODE=? and VUELO in \n" +
+//                    "(select ID_FLY from flyfunairlines.flight where F_SALIDA < date_add(sysdate(), interval 10 day))) \n" +
+//                    "and s.ID_SERVICE in (select SERVICIO from flyfunairlines.occupation_service where OCUPACION in \n" +
+//                    "(select ID_OCP from flyfunairlines.occupation o, flyfunairlines.passenger ps where o.PASAJERO = ps.ID_PASSENGER and p.ID_PASSENGER = ps.ID_PASSENGER))\n" +
+//                    "order by ID_PASSENGER;";
+//            PreparedStatement pStps = _connection.prepareStatement(pasajeroServicio);
+//                pStps.setString(1, bk);
+//                ResultSet rs = pStps.executeQuery();
+//                Passenger p = null;
+//                while(rs.next()){
+//                    if(idP == 0 || idP != rs.getInt("ID_PASSENGER")){
+//                        idP = rs.getInt("ID_PASSENGER");
+//                        p = new Passenger(idP, rs.getString("NIF"), rs.getString("PREFIJO"), rs.getString("NOMBRE"), rs.getString("APELLIDOS"), rs.getString("EMAIL"), rs.getString("TIPO"), null, null, null, null, null, null);
+//                        pasajerosCheckin.add(p);
+//                    }
+//                    Service s = new Service(rs.getInt("ID_SERVICE"), rs.getString("DENOMINACION"), rs.getString("DESCRIPCION"), rs.getFloat("PRECIO"));
+//                    p.getServices().add(s);
+//                }
+//            
+//        } catch (SQLException ex) {
+//            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return pasajerosCheckin;
+//        
+//    }
+
+********************************************
+vuelo por nombre y fecha delete
+en las tablas ese vuelo en vuelobackup
+			ocupacion de ese vuelo en ocupacionbackup
+			tienen que quedar las ocupaciones de vuelo de vuelta
+
+****************************************************
+Detalle servicios-pasajeros:
+
+select p.*, s.* from flyfunairlines.passenger p, flyfunairlines.service s where p.ID_PASSENGER in 
+		(select PASAJERO from flyfunairlines.occupation where BOOKING_CODE='otmh82x8' and VUELO in 
+        (select ID_FLY from flyfunairlines.flight where F_SALIDA < date_add(sysdate(), interval 10 day))) 
+and s.ID_SERVICE in (select SERVICIO from flyfunairlines.occupation_service where OCUPACION in 
+					(select ID_OCP from flyfunairlines.occupation o, flyfunairlines.passenger ps where o.PASAJERO = ps.ID_PASSENGER and p.ID_PASSENGER = ps.ID_PASSENGER))
+order by ID_PASSENGER;
+
+Detalle vuelo:
+
+select * from flyfunairlines.flight where F_SALIDA < date_add(sysdate(), interval 10 day) and ID_FLY in(select VUELO from flyfunairlines.occupation where BOOKING_CODE='otmh82x8');
+
+Pasajeros sin asiento:
+
+select * from flyfunairlines.passenger where ID_PASSENGER in (select PASAJERO from flyfunairlines.occupation where BOOKING_CODE='otmh82x8' and ASIENTO is null);
+
+Reserva total a modificar:
+
+SELECT * FROM flyfunairlines.booking where BK_CODE='abm657en';
+

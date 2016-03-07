@@ -15,29 +15,62 @@ public class Booking {
     private Client client;
     private Occupation ida;
     private Occupation vuelta;
-    private String tipo;
+    private float precio;
+    private String rIda;
+    private String rVuelta;
 
-    public Booking(int idBooking, Client idClient, Occupation oOW, Occupation oR, String tipo) {
+    public Booking(int idBooking, Client idClient, Occupation oOW, Occupation oR) {
         this.idBooking = idBooking;
         this.client = idClient;
         this.ida = oOW;
         this.vuelta = oR;
-        this.tipo = tipo;
+        this.rIda = null;
+        this.rVuelta = null;
     }
 
-    public Booking(Client idClient, Occupation oOW, Occupation oR, String tipo) {
+    public Booking(Client idClient, Occupation oOW, Occupation oR, String i, String v) {
         this.client = idClient;
         this.ida = oOW;
         this.vuelta = oR;
-        this.tipo = tipo;
+        this.rIda = i;
+        this.rVuelta = v;
     }
 
-    public String getTipo() {
-        return tipo;
+    public Booking(int idBooking, float precio, String rIda, String rVuelta) {
+        this.idBooking = idBooking;
+        this.client = null;
+        this.ida = null;
+        this.vuelta = null;
+        this.precio = precio;
+        this.rIda = rIda;
+        this.rVuelta = rVuelta;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    
+    
+    public String getrIda() {
+        return rIda;
+    }
+
+    public void setrIda(String rIda) {
+        this.rIda = rIda;
+    }
+
+    public String getrVuelta() {
+        return rVuelta;
+    }
+
+    public void setrVuelta(String rVuelta) {
+        this.rVuelta = rVuelta;
+    }
+
+
+    public float getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(float precio) {
+        this.precio = precio;
     }
     
     public int getIdBooking() {
@@ -72,7 +105,30 @@ public class Booking {
         this.vuelta = vuelta;
     }
 
-    
+    public void priceCalc(){
+        float pt;
+        pt = this.ida.getFlight().getFrecio();
+        
+        for(int i=0 ; i< this.ida.getPassengers().size(); i++){
+            if((this.ida.getPassengers().get(i)).getServices() != null){
+            for(int j=0; j<(this.ida.getPassengers().get(i)).getServices().size(); j++ ){
+                pt += ((this.ida.getPassengers().get(i)).getServices().get(j)).getFrecio();
+            }
+            }          
+        }
+         
+        if( this.vuelta != null ){
+            pt += this.vuelta.getFlight().getFrecio();
+        for(int i=0 ; i< this.vuelta.getPassengers().size(); i++){
+            if((this.ida.getPassengers().get(i)).getServices() != null){
+            for(int j=0; j< (this.vuelta.getPassengers().get(i)).getServices().size(); j++ ){
+                pt += ((this.vuelta.getPassengers().get(i)).getServices().get(j)).getFrecio();
+            }          
+            } 
+        }
+        }
+        this.precio = pt;
+    }
     
     
 }

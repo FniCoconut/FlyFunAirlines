@@ -70,6 +70,7 @@ public class servletSeleccionVuelo extends HttpServlet {
             for(int i = 0; i < _vuelosIda.size() ; i++){
                 if(_vuelosIda.get(i).getIdFlight() == idOWTrip){ occupationOneWay = new Occupation(_vuelosIda.get(i)); }
             }
+                        
             session.setAttribute("occupationOW", occupationOneWay);
             String trip = (String)session.getAttribute("kindTrip");
             

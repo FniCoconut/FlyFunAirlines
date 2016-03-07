@@ -7,14 +7,15 @@ package FlyFunPackage.CONTROLLER;
 
 import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
-import FlyFunPackage.MODEL.Booking;
-import FlyFunPackage.MODEL.Card;
-import FlyFunPackage.MODEL.Client;
 import FlyFunPackage.MODEL.Occupation;
+import FlyFunPackage.MODEL.Passenger;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,15 +26,16 @@ import javax.servlet.http.HttpSession;
  *
  * @author Coconut
  */
-public class servletPago extends HttpServlet {
+public class servletCheckInPasajero extends HttpServlet {
 
     private Connection connection;
     private ConnectionBBDD connectionBBDD;
     
+    
     @Override
     public void init() throws ServletException{
-    
-    try{
+        
+        try{
             connectionBBDD = ConnectionBBDD.GetConexion();
             connection = connectionBBDD.GetCon();
         }catch(ClassNotFoundException cnfe){  
@@ -56,35 +58,32 @@ public class servletPago extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            HttpSession session = request.getSession(true);
-            Occupation oOW = (Occupation)session.getAttribute("occupationOW");
-            Occupation oR = null;
-            Booking booking = (Booking)session.getAttribute("booking");
-                        
-            Client cliente = (Client)session.getAttribute("client");
-               
-            String nifCliente = cliente.getNif();
-            
-            String numTarjeta = request.getParameter("tjNumber");
-            String cvv = request.getParameter("cvvTj");
-            int mesCad = Integer.parseInt(request.getParameter("mesCad"));
-            int anoCad = Integer.parseInt(request.getParameter("anoCad"));
-            
-            Card tjt = new Card(numTarjeta, mesCad, anoCad);
-            
-            cliente.setCard(tjt);
-            
-            if(((String)session.getAttribute("kindTrip")).equalsIgnoreCase("vuelta")){
-                //oR = (Occupation)session.getAttribute("occupationR");
-                booking.setClient(cliente);
-                booking.priceCalc();
-            }else{
-                booking.setClient(cliente);
-                booking.priceCalc();
+           HttpSession session = request.getSession(true);
+           Occupation oc = (Occupation)session.getAttribute("occupationCheckIn");
+           ArrayList<Passenger> pasajeros = oc.getPassengers();
+                   
+           Iterator itr = pasajeros.iterator();
+           Passenger p = null;
+           
+            while(itr.hasNext()){
+                p = (Passenger)itr.next();
+                LocalDate cad = LocalDate.parse(request.getParameter("fcad"+p.getIdPassenger()));
+                LocalDate nac = LocalDate.parse(request.getParameter("fnac"+p.getIdPassenger()));
+                String nacion = request.getParameter("nacionalidad"+p.getIdPassenger());
+                
+                p.setFechaCaducidadNif(cad);
+                p.setFechaNacimiento(nac);
+                p.setNacionalidad(nacion); 
+                
             }
             
-                    new Operation().insertBooking(connection, booking, (String)session.getAttribute("kindTrip"));
-                    response.sendRedirect("index.html");
+            new Operation().checkIn(connection, oc);
+            //ahora hay que actualizar los datos
+            //¿Cómo saber si es ida o vuelta?
+            //Creando la ocupacion y comparando la fecha de vuelo o 
+            //añadiendo un campo a la ocupacion que se repetirá en todas las filas
+            //pero puede que haga mas facil la eliminación 
+            
         }
     }
 

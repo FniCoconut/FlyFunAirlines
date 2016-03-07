@@ -5,6 +5,7 @@
  */
 package FlyFunPackage.MODEL;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
@@ -22,13 +23,15 @@ public class Passenger {
     private String type;
     private String asiento;
     private Passenger attend;
-    private ArrayList<Service> services;
+    private LocalDate fechaCaducidadNif;
+    private LocalDate fechaNacimiento;
+    private String nacionalidad;
+    private ArrayList<Service> services = new ArrayList();
     //Private services;
 
-    // --> CONSTRUCTOR DE ADULTOS Y NIÑOS <--
     /**
      * @author Coconut
-     * Recogida de pasajeros de la base de datos sin asiento.
+     * Recogida de pasajeros de la base de datos sin asiento y sin adulto asignado.
      * @param idPassenger
      * @param nif
      * @param prefix
@@ -45,7 +48,10 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
-        this.asiento = "";
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
+        this.asiento = null;
         this.attend = null;
         this.services = new ArrayList();
     }
@@ -68,7 +74,10 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
-        this.asiento = "";
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
+        this.asiento = null;
         this.attend = null;
         this.services = new ArrayList();
     }
@@ -92,7 +101,10 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
-        this.asiento = "";
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
+        this.asiento = null;
         this.services = services;
     }
 
@@ -116,6 +128,9 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
         this.asiento = asiento;
         this.services = services;
     }
@@ -133,7 +148,7 @@ public class Passenger {
      * @param asiento
      * @param services 
      */
-    public Passenger(int idPassenger, String nif, String prefix, String name, String surname, String eMail, String type, String asiento, ArrayList<Service> services) {
+    public Passenger(int idPassenger, String nif, String prefix, String name, String surname, String eMail, String type, String asiento) {
         this.idPassenger = idPassenger;
         this.nif = nif;
         this.prefix = prefix;
@@ -141,8 +156,26 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
         this.asiento = asiento;
         this.services = services;
+    }
+    
+    public Passenger(int idPassenger) {
+        this.idPassenger = idPassenger;
+        this.nif = null;
+        this.prefix = null;
+        this.name = null;
+        this.surname = null;
+        this.eMail = null;
+        this.type = null;
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
+        this.asiento = null;
+        this.services = new ArrayList();
     }
     
     // --> CONSTRUCTOR DE BEBES <--
@@ -166,7 +199,11 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
         this.attend = attend;
+        this.services = new ArrayList();
     }
     
     /**
@@ -187,8 +224,95 @@ public class Passenger {
         this.surname = surname;
         this.eMail = eMail;
         this.type = type;
+        this.fechaCaducidadNif = null;
+        this.fechaNacimiento = null;
+        this.nacionalidad= null;
         this.attend = attend;
+        this.services = new ArrayList();
     }
+    /**
+     * @author Coconut
+     * @param idPassenger
+     * @param nif
+     * @param prefix
+     * @param name
+     * @param surname
+     * @param eMail
+     * @param type
+     * @param asiento
+     * @param attend
+     * @param fechaCaducidadNif
+     * @param fechaNacimiento
+     * @param nacionalidad
+     * @param services 
+     * Pasajero completo
+     */
+    public Passenger(int idPassenger, String nif, String prefix, String name, String surname, String eMail, String type, String asiento, Passenger attend, LocalDate fechaCaducidadNif, LocalDate fechaNacimiento, String nacionalidad, ArrayList<Service> services) {
+        this.idPassenger = idPassenger;
+        this.nif = nif;
+        this.prefix = prefix;
+        this.name = name;
+        this.surname = surname;
+        this.eMail = eMail;
+        this.type = type;
+        this.asiento = asiento;
+        this.attend = attend;
+        this.fechaCaducidadNif = fechaCaducidadNif;
+        this.fechaNacimiento = fechaNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.services = services;
+    }
+    /**
+     * @author Coconut
+     * @param nif
+     * @param prefix
+     * @param name
+     * @param surname
+     * @param eMail
+     * @param type
+     * @param asiento
+     * @param attend
+     * @param fechaCaducidadNif
+     * @param fechaNacimiento
+     * @param nacionalidad
+     * @param services
+     * Pasajero compleo sin id
+     */
+    public Passenger(String nif, String prefix, String name, String surname, String eMail, String type, String asiento, Passenger attend, LocalDate fechaCaducidadNif, LocalDate fechaNacimiento, String nacionalidad, ArrayList<Service> services) {
+        this.idPassenger = 0;
+        this.nif = nif;
+        this.prefix = prefix;
+        this.name = name;
+        this.surname = surname;
+        this.eMail = eMail;
+        this.type = type;
+        this.asiento = asiento;
+        this.attend = attend;
+        this.fechaCaducidadNif = fechaCaducidadNif;
+        this.fechaNacimiento = fechaNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.services = services;
+    }
+
+    public Passenger(int idPassenger, String nif, String prefix, String name, String surname, String eMail, String type, String asiento, Passenger attend, LocalDate fechaCaducidadNif, LocalDate fechaNacimiento, String nacionalidad) {
+        this.idPassenger = idPassenger;
+        this.nif = nif;
+        this.prefix = prefix;
+        this.name = name;
+        this.surname = surname;
+        this.eMail = eMail;
+        this.type = type;
+        this.asiento = asiento;
+        this.attend = attend;
+        this.fechaCaducidadNif = fechaCaducidadNif;
+        this.fechaNacimiento = fechaNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.services = new ArrayList();
+    }
+    
+    
+    
+    
 
     public String getAsiento() {
         return asiento;
@@ -205,6 +329,9 @@ public class Passenger {
     public void setServices(ArrayList<Service> services) {
         for(int i=0 ; i<services.size() ; i++){
             this.services.add(services.get(i).clone());
+            /*
+            Añadir servicios desde el check-in falla aqui.
+            */
         }
     }
 
@@ -272,6 +399,32 @@ public class Passenger {
         this.attend = attend;
     }
 
+    public LocalDate getFechaCaducidadNif() {
+        return fechaCaducidadNif;
+    }
+
+    public void setFechaCaducidadNif(LocalDate fechaCaducidadNif) {
+        this.fechaCaducidadNif = fechaCaducidadNif;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getNacionalidad() {
+        return nacionalidad;
+    }
+
+    public void setNacionalidad(String nacionalidad) {
+        this.nacionalidad = nacionalidad;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "Passenger{" + "idPassenger=" + idPassenger + ", nif=" + nif + ", prefix=" + prefix + ", name=" + name + ", surname=" + surname + ", eMail=" + eMail + ", type=" + type + ", attend=" + attend + ", services=" + services + '}';

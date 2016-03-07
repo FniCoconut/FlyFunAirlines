@@ -1,0 +1,75 @@
+/*backup tabla vuelos*/
+
+CREATE TABLE `flight_bkp` (
+  `ID_FLY` int(4) NOT NULL AUTO_INCREMENT,
+  `CONNECTION` int(3) NOT NULL,
+  `N_VUELO` varchar(5) NOT NULL,
+  `F_SALIDA` date NOT NULL,
+  `H_SALIDA` time NOT NULL,
+  `FRECIO` float NOT NULL,
+  `AVION` int(2) DEFAULT NULL,
+  `PLAZAS` int(2) DEFAULT NULL,
+  `FECHA_BAJA` date NOT NULL,
+  PRIMARY KEY (`ID_FLY`)) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+
+/*backup tabla ocupacion*/
+
+CREATE TABLE `occupation_bkp` (
+  `ID_OCP` int(4) NOT NULL AUTO_INCREMENT,
+  `BOOKING_CODE` varchar(10) NOT NULL,
+  `VUELO` int(3) NOT NULL,
+  `PASAJERO` int(4) NOT NULL,
+  `ASIENTO` varchar(5) DEFAULT NULL,
+  `FECHA_BAJA` date NOT NULL,
+  PRIMARY KEY (`ID_OCP`)) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+
+/*backup tabla ocupacion con servicios contratados*/
+
+CREATE TABLE `occupation_service_bkp` (
+  `ID_OS` int(4) NOT NULL AUTO_INCREMENT,
+  `SERVICIO` int(2) NOT NULL,
+  `DENOMINACION` varchar(45) NOT NULL,
+  `DESCRIPCION` text NOT NULL,
+  `PRECIO` float NOT NULL,
+  `OCUPACION` int(4) NOT NULL,
+  `FECHA_BAJA` date NOT NULL,
+  PRIMARY KEY (`ID_OS`)) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8;
+
+/*backup tabla pasajeros*/
+
+CREATE TABLE `passenger_bkp` (
+  `ID_PASSENGER` int(4) NOT NULL AUTO_INCREMENT,
+  `NIF` varchar(10) NOT NULL,
+  `FECHA_CAD` date DEFAULT NULL,
+  `PREFIJO` varchar(5) DEFAULT NULL,
+  `NOMBRE` varchar(30) NOT NULL,
+  `APELLIDOS` varchar(60) NOT NULL,
+  `NACIONALIDAD` varchar(45) DEFAULT NULL,
+  `EMAIL` varchar(50) DEFAULT NULL,
+  `TIPO` varchar(10) NOT NULL,
+  `FECHA_NAC` date DEFAULT NULL,
+  `CARGO` int(4) DEFAULT NULL,
+  `FECHA_BAJA` date NOT NULL,
+  PRIMARY KEY (`ID_PASSENGER`)) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8;
+
+/*backup tabla reservas*/
+
+CREATE TABLE `booking_bkp` (
+  `ID_BK` int(5) NOT NULL AUTO_INCREMENT,
+  `CLIENTE` int(4) NOT NULL,
+  `BK_CODE` varchar(10) NOT NULL,
+  `IDA` set('0','1') DEFAULT NULL,
+  `VUELTA` set('0','1') DEFAULT NULL,
+  `PRECIO` float NOT NULL,
+  `FECHA_BAJA` date NOT NULL,
+  PRIMARY KEY (`ID_BK`)) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+/*backup tabla pagos*/
+
+CREATE TABLE `payment_bkp` (
+  `ID_PAY` int(11) NOT NULL AUTO_INCREMENT,
+  `BOOKING` int(5) DEFAULT NULL,
+  `CLIENT` int(4) DEFAULT NULL,
+  `CARD` int(4) DEFAULT NULL,
+  `FECHA_BAJA` date NOT NULL,
+  PRIMARY KEY (`ID_PAY`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

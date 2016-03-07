@@ -5,6 +5,7 @@
  */
 package FlyFunPackage.CONTROLLER;
 
+import FlyFunPackage.MODEL.Booking;
 import FlyFunPackage.MODEL.Client;
 import FlyFunPackage.MODEL.Occupation;
 import FlyFunPackage.MODEL.Passenger;
@@ -52,7 +53,8 @@ public class servletRevisionServicios extends HttpServlet {
             
             HttpSession session = request.getSession(true);
             
-            ((Occupation)session.getAttribute("occupationOW")).setBookingCode(bkcode);
+            Occupation ida = (Occupation)session.getAttribute("occupationOW");
+            ida.setBookingCode(bkcode);
             
             Client cliente = (Client)session.getAttribute("client");
             
@@ -79,7 +81,7 @@ public class servletRevisionServicios extends HttpServlet {
                             if(kindOfSeat.equalsIgnoreCase("p")){
                                (passengers.get(i).getServices().get(j)).setDenomination("AsientoPremium");
                             }
-                        }
+                        }else{response.sendRedirect("revisionServicios.jsp");}
                     }
                     //ASIGNAR ASIENTO AL OBJ PASAJERO
                     for(int k=0 ; k<services.size(); k++){
@@ -95,10 +97,14 @@ public class servletRevisionServicios extends HttpServlet {
                 }
                 }
             }
-            
+            String codI = "1";
+            Occupation vuelta = null;
+            String codV = "null";
             //servicios de vuelta
             if( kind.equalsIgnoreCase("vuelta")){
-                ((Occupation)session.getAttribute("occupationR")).setBookingCode(bkcode);
+                codV = "1";
+                vuelta = (Occupation)session.getAttribute("occupationR");
+                vuelta.setBookingCode(bkcode);
                 passengersReturn = ((Occupation)session.getAttribute("occupationR")).getPassengers();
            // passengersReturn = (ArrayList)session.getAttribute("passengerR");
             
@@ -116,7 +122,7 @@ public class servletRevisionServicios extends HttpServlet {
                             if(kindOfSeat.equalsIgnoreCase("p")){
                                (passengersReturn.get(i).getServices().get(j)).setDenomination("AsientoPremium");
                             }
-                        }
+                        }else{response.sendRedirect("revisionServicios.jsp");}
                     }
                     
                     for(int k=0 ; k<services.size(); k++){
@@ -134,8 +140,8 @@ public class servletRevisionServicios extends HttpServlet {
             }  
             }
             
-            
-            
+            Booking reserva = new Booking(null, ida, vuelta, codI, codV);
+            session.setAttribute("booking", reserva);
             response.sendRedirect("pago.jsp");
     }
     }

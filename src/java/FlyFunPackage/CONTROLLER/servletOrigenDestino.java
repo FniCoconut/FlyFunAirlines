@@ -9,6 +9,7 @@ import FlyFunPackage.DAO.ConnectionBBDD;
 import FlyFunPackage.DAO.Operation;
 import FlyFunPackage.MODEL.AirConnect;
 import FlyFunPackage.MODEL.Airport;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -61,24 +62,31 @@ public class servletOrigenDestino extends HttpServlet {
                 Airport origen = null;
             ArrayList<Airport> _destinys = (ArrayList)session.getAttribute("airportsD");
                 Airport destino = null;
+                
+            ArrayList total= new ArrayList();
             
             int O = Integer.parseInt(request.getParameter("o"));
                 for(int i=0; i < _origins.size(); i++){
                     if( _origins.get(i).getIdAirport() == O){
-                        origen = new Airport(_origins.get(i).getIdAirport(), _origins.get(i).getIata(), _origins.get(i).getName(), _origins.get(i).getTerm(), _origins.get(i).getCity(), _origins.get(i).getCountry());
+                        origen = new Airport(_origins.get(i).getIdAirport(), _origins.get(i).getIata(), _origins.get(i).getName(), _origins.get(i).getTerm(), _origins.get(i).getCity(), _origins.get(i).getCountry(), _origins.get(i).getKey());
                     }
                 }
             // origen = obj Aeropuerto de origen    
+            total.add(origen);
             
             int D = Integer.parseInt(request.getParameter("d"));
                 for(int i=0; i < _destinys.size(); i++){
                     if( _destinys.get(i).getIdAirport() == D){
-                        destino = new Airport(_destinys.get(i).getIdAirport(), _destinys.get(i).getIata(), _destinys.get(i).getName(), _destinys.get(i).getTerm(),  _destinys.get(i).getCity(), _destinys.get(i).getCountry());
+                        destino = new Airport(_destinys.get(i).getIdAirport(), _destinys.get(i).getIata(), _destinys.get(i).getName(), _destinys.get(i).getTerm(),  _destinys.get(i).getCity(), _destinys.get(i).getCountry(), _destinys.get(i).getKey());
                     }
                 }
             
+            total.add(destino);
             
-            String str = "Viaje desde: "+origen.getCity()+", "+origen.getName()+"<br>"+"hasta: "+destino.getCity()+", "+destino.getName();
+            Gson gson = new Gson();
+            String str=gson.toJson(total);
+            
+//            String str = "Viaje desde: "+origen.getCity()+", "+origen.getName()+"<br>"+"hasta: "+destino.getCity()+", "+destino.getName();
             out.print(str);
         }
     }

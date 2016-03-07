@@ -13,17 +13,17 @@ public class Card {
     //client's card data
     private int idTj;
     private String numTj;
-    private String mesCad;
-    private String anoCad;
+    private int mesCad;
+    private int anoCad;
 
-    public Card(int idTj, String numTj, String mesCad, String anoCad) {
+    public Card(int idTj, String numTj, int mesCad, int anoCad) {
         this.idTj = idTj;
         this.numTj = numTj;
         this.mesCad = mesCad;
         this.anoCad = anoCad;
     }
 
-    public Card(String numTj, String mesCad, String anoCad) {
+    public Card(String numTj, int mesCad, int anoCad) {
         this.numTj = numTj;
         this.mesCad = mesCad;
         this.anoCad = anoCad;
@@ -45,22 +45,22 @@ public class Card {
         this.numTj = numTj;
     }
 
-    public String getMesCad() {
+    public int getMesCad() {
         return mesCad;
     }
 
-    public void setMesCad(String mesCad) {
+    public void setMesCad(int mesCad) {
         this.mesCad = mesCad;
     }
 
-    public String getAnoCad() {
+    public int getAnoCad() {
         return anoCad;
     }
 
-    public void setAnoCad(String anoCad) {
+    public void setAnoCad(int anoCad) {
         this.anoCad = anoCad;
     }
-            
+
     
     
 }

@@ -16,6 +16,7 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +39,7 @@ public class Operation {
             ResultSet rs = st.executeQuery("SELECT * FROM flyfunairlines.airport;");
 
             while(rs.next()){
-                Airport _origin = new Airport(rs.getInt("ID_AIRPORT"), rs.getString("IATA"), rs.getString("NOMBRE"), rs.getString("TERMINAL"), rs.getString("CIUDAD"), rs.getString("PAIS"));
+                Airport _origin = new Airport(rs.getInt("ID_AIRPORT"), rs.getString("IATA"), rs.getString("NOMBRE"), rs.getString("TERMINAL"), rs.getString("CIUDAD"), rs.getString("PAIS"), rs.getInt("KEY"));
                 _origins.add(_origin);
             }
             rs.close();
@@ -48,6 +49,7 @@ public class Operation {
         
         return _origins;
     }
+
     /**
      * @author Coconut
      * @param _connection
@@ -62,7 +64,7 @@ public class Operation {
             ResultSet rs = st.executeQuery("SELECT * FROM flyfunairlines.airport WHERE ID_AIRPORT IN (SELECT ac.T_DESTINO FROM flyfunairlines.airport a, flyfunairlines.air_connect ac WHERE ID_AIRPORT="+_origin+" AND a.ID_AIRPORT=ac.T_ORIGEN);");
 
             while(rs.next()){
-                Airport _destiny = new Airport(rs.getInt("ID_AIRPORT"), rs.getString("IATA"), rs.getString("NOMBRE"), rs.getString("TERMINAL"), rs.getString("CIUDAD"), rs.getString("PAIS"));
+                Airport _destiny = new Airport(rs.getInt("ID_AIRPORT"), rs.getString("IATA"), rs.getString("NOMBRE"), rs.getString("TERMINAL"), rs.getString("CIUDAD"), rs.getString("PAIS"), rs.getInt("KEY"));
                 _destinys.add(_destiny);
             }
             rs.close();
@@ -72,6 +74,7 @@ public class Operation {
         
         return _destinys;
     }
+    
     /**
      * @author Coconut
      * @param _connection
@@ -94,6 +97,7 @@ public class Operation {
         return cnx;
         
     }
+    
     /**
      * @author Coconut
      * @param _connection
@@ -111,7 +115,7 @@ public class Operation {
 
         try {    
             Statement st = _connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM flyfunairlines.flight WHERE F_SALIDA between date_sub('"+_date+"', interval 5 day) and date_add('"+_date+"', interval 5 day) and PLAZAS > "+_vacances+" and CONNECTION="+cnx.getIdConnection()+";");
+            ResultSet rs = st.executeQuery("SELECT * FROM flyfunairlines.flight WHERE F_SALIDA between date_sub('"+_date+"', interval 5 day) and date_add('"+_date+"', interval 5 day) and PLAZAS > "+_vacances+" and CONNECTION="+cnx.getIdConnection()+" ORDER BY F_SALIDA ASC;");
             
             while(rs.next()){
                 LocalDate dateTrip = LocalDate.parse(rs.getString("F_SALIDA"));
@@ -125,6 +129,7 @@ public class Operation {
         
         return flyTrip;
     }
+    
     /**
      * @author Coconut
      * @param _connection
@@ -146,13 +151,14 @@ public class Operation {
         return services;
         
     }
+    
     /**
      * @author Coconut
      * @param _connection
      * @param _client
-     * @return true si el cliente ha sido añadido, false cuando ocurre algún problema
+     * @return Cliente, con esto se inicia sesión al registrarse.
      */
-    public boolean addCliente(Connection _connection, Client _client){
+    public Client addCliente(Connection _connection, Client _client){
         
         String _nif = _client.getNif();
         String _prefix = _client.getPrefix();
@@ -165,7 +171,7 @@ public class Operation {
         boolean flg = true;
         
         try{
-            PreparedStatement PStm = _connection.prepareStatement("INSERT INTO flyfunairlines.client VALUES( default, ?, aes_encrypt(?, '"+_eMail+"'), ?, ?, ?, ?, ?, ?, null)");
+            PreparedStatement PStm = _connection.prepareStatement("INSERT INTO flyfunairlines.client VALUES( default, ?, aes_encrypt(?, '"+_eMail+"'), ?, ?, ?, ?, ?, ?, null)", Statement.RETURN_GENERATED_KEYS);
             PStm.setString(1, _nif);
             PStm.setString(2, _pass);
             PStm.setString(3, _prefix);
@@ -176,19 +182,29 @@ public class Operation {
             PStm.setString(8, _adress);
             
             PStm.executeUpdate();
-            flg = true;
+            
+            if(flg){
+                ResultSet lastIdC = PStm.getGeneratedKeys();
+                if(lastIdC.next()){
+                    _client.setIdCliente(lastIdC.getInt(1));
+                    return _client;
+                }else{
+                        throw new SQLException("caca id cliente");
+                    }
+            }                  
+            
         }catch (SQLException ex){
             ex.getMessage();
             if(_connection != null){
                 try{
-                    flg = false;
                     _connection.rollback();
+                    return null;
                 }catch(SQLException SQLEx2){
                     SQLEx2.getMessage();
                 }
             }
         }
-        return flg;
+        return _client;
     }
     
     /**
@@ -243,24 +259,65 @@ public class Operation {
     /**
      * @author Coconut
      * @param _connection
-     * @param bk Obj booking, contiene la ocupacion que se haga para el viaje de ida y de haber, también el de vuelta
+     * @param f Object Flight
+     * @return ArrayList de asientos ocupados
      */
-    public void insertBooking(Connection _connection, Booking bk){
+    public ArrayList getOccupation(Connection _connection, Flight f){
+        ArrayList seats = new ArrayList();
+        try {
+            PreparedStatement pSOccup = _connection.prepareStatement("select ASIENTO from flyfunairlines.occupation where VUELO ="+f.getIdFlight());
+            ResultSet rs = pSOccup.executeQuery();
+            while(rs.next()){
+                seats.add(rs.getString("ASIENTO"));
+            }
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return seats;
+    }
+    
+    /**
+     * @author Coconut
+     * @param _connection
+     * @param bk Obj booking, contiene la ocupacion que se haga para el viaje de ida y de haber, también el de vuelta
+     * @param viaje String que contiene el tipo de viaje
+     */
+    public void insertBooking(Connection _connection, Booking bk,String viaje){
         //recibe reserva que tiene obj ocupacion que tienen array de pasajeros que tienen array deservicios
-                    boolean flag = false;
-        String tipo = bk.getTipo();
+        boolean flag = false;
+        String tipo = viaje;
         Occupation ocOW = bk.getIda();
         Client cl = bk.getClient();
+        Card cr = cl.getCard();
             String bookingCode = ocOW.getBookingCode();
             ArrayList<Passenger> pasajeros = ocOW.getPassengers();
-            
-            String passenger = "INSERT INTO flyfunairlines.passenger VALUES( default, ?, ?, ?, ?, ?, ?, ?)";
+            //añadir columnas fechaCaducidad, nacionalidad, fechaNacimiento
+            String passenger = "INSERT INTO flyfunairlines.passenger VALUES( default, ?,null, ?, ?, ?,null, ?, ?, null, ?)";
             String occup = "INSERT INTO flyfunairlines.occupation VALUES ( default, '"+bookingCode+"', "+(ocOW.getFlight()).getIdFlight()+", ?, ?)";
             String serv = "INSERT INTO flyfunairlines.occupation_service VALUES ( default, ?, ?)";
-            String booking = "INSERT INTO flyfunairlines.booking VALUES( default, "+cl.getIdCliente()+", '"+bookingCode+"', "+tipo+")";
+            
         try{
             _connection.setAutoCommit(false);
             
+            PreparedStatement pStmCard = _connection.prepareStatement("INSERT INTO flyfunairlines.card VALUES( default,? , aes_encrypt(?,'"+cl.getNif()+"'), ?, ?)",Statement.RETURN_GENERATED_KEYS);
+                pStmCard.setInt(1, cl.getIdCliente());
+                pStmCard.setString(2, cr.getNumTj());
+                pStmCard.setInt(3, cr.getMesCad());
+                pStmCard.setInt(4, cr.getAnoCad());
+                
+                pStmCard.executeUpdate();
+                
+                try(ResultSet lastId = pStmCard.getGeneratedKeys()){
+                    if(lastId.next()){
+                        cr.setIdTj(lastId.getInt(1));
+                    }
+                    else{
+                        throw new SQLException("caca id card");
+                    }
+                }
+                
+                
             for( int i=0 ; i<pasajeros.size() ; i++){
                 
             if(!((pasajeros.get(i)).getType().equalsIgnoreCase("bebe"))){
@@ -304,6 +361,9 @@ public class Operation {
                     else{
                         throw new SQLException("caca id ocupacion");
                     }
+                    
+                    PreparedStatement pStmVuelo = _connection.prepareStatement("UPDATE flyfunairlines.flight SET PLAZAS = PLAZAS - 1 WHERE ID_FLY ="+ocOW.getFlight().getIdFlight());
+                    pStmVuelo.executeUpdate();
                 }
                 //aqui el inser en bookig_services
                 for(int k=0 ; k<servicios.size(); k++){
@@ -319,16 +379,17 @@ public class Operation {
                 if( pasajeros.contains(bebe.getAttend()) && !flag ){
                 //for(int j=0; j<pasajeros.size(); j++){
                 //    if( (bebe.getAttend().getNif()).equalsIgnoreCase((pasajeros.get(j)).getNif()) ){
-                        PreparedStatement pStmPasajeros = _connection.prepareStatement(passenger);
-                            pStmPasajeros.setString(1, (bebe).getNif());
-                            pStmPasajeros.setString(2, (bebe).getPrefix());
-                            pStmPasajeros.setString(3, (bebe).getSurname());
-                            pStmPasajeros.setString(4, (bebe).getName());
-                            pStmPasajeros.setString(5, (bebe).geteMail());
-                            pStmPasajeros.setString(6, (bebe).getType());
-                            pStmPasajeros.setInt(7, (bebe).getAttend().getIdPassenger() );//aqui necesitamos el id de la persona que está a cargo
+                    String bebeQ = "INSERT INTO flyfunairlines.passenger VALUES( default, ?,null, ?, ?, ?,null, ?, ?, null, ?)";
+                        PreparedStatement pStmPasajerosB = _connection.prepareStatement(bebeQ);
+                            pStmPasajerosB.setString(1, (bebe).getNif());
+                            pStmPasajerosB.setString(2, null);
+                            pStmPasajerosB.setString(3, (bebe).getSurname());
+                            pStmPasajerosB.setString(4, (bebe).getName());
+                            pStmPasajerosB.setString(5, null);
+                            pStmPasajerosB.setString(6, (bebe).getType());
+                            pStmPasajerosB.setInt(7, (bebe).getAttend().getIdPassenger() );//aqui necesitamos el id de la persona que está a cargo
                         
-                        pStmPasajeros.executeUpdate();
+                        pStmPasajerosB.executeUpdate();
                     flag = true;
                     }
                 }
@@ -338,86 +399,69 @@ public class Operation {
         if(tipo.equalsIgnoreCase("vuelta")){
             
             Occupation ocR = bk.getVuelta();
-            String occupR = "INSERT INTO flyfunairlines.occupation VALUES (default, '"+bookingCode+"', "+(ocR.getFlight()).getIdFlight()+", ?, '?')";
-            
+            String occupR = "INSERT INTO flyfunairlines.occupation VALUES (default, '"+bookingCode+"', "+(ocR.getFlight()).getIdFlight()+", ?, ?)";
+            String servR = "INSERT INTO flyfunairlines.occupation_service VALUES ( default, ?, ?)";
             ArrayList<Passenger> pasajerosR = ocOW.getPassengers();
             
-            for( int i=0 ; i<pasajerosR.size() ; i++){
+            for( int i=0 ; i<pasajerosR.size() && i<pasajeros.size() ; i++){
                 
             if(!((pasajerosR.get(i)).getType().equalsIgnoreCase("bebe"))){
-                //recorremos e insertamos personas adulto y nino
+                // --> SERVICIOS DE VUELTA <--
                 ArrayList<Service> serviciosR = (pasajerosR.get(i)).getServices();
-                
-                PreparedStatement pStmPasajerosR = _connection.prepareStatement(passenger,Statement.RETURN_GENERATED_KEYS);
-                    pStmPasajerosR.setString(1, (pasajerosR.get(i)).getNif());
-                    pStmPasajerosR.setString(2, (pasajerosR.get(i)).getPrefix());
-                    pStmPasajerosR.setString(3, (pasajerosR.get(i)).getSurname());
-                    pStmPasajerosR.setString(4, (pasajerosR.get(i)).getName());
-                    pStmPasajerosR.setString(5, (pasajerosR.get(i)).geteMail());
-                    pStmPasajerosR.setString(6, (pasajerosR.get(i)).getType());
-                    pStmPasajerosR.setInt(7, 0);//aqui necesitamos el id de la persona que está a cargo
-                
-                int rowP = pStmPasajerosR.executeUpdate();
-                
-                if(rowP == 0){throw new SQLException("caca insert pasajero");}
-                
-                try(ResultSet lastId = pStmPasajerosR.getGeneratedKeys()){
-                    if(lastId.next()){
-                        pasajerosR.get(i).setIdPassenger(lastId.getInt(1));
-                    }
-                    else{
-                        throw new SQLException("caca id pasajero");
-                    }
-                }
                 
                 //aqui insert en ocupación
                 PreparedStatement pStmOcupacionR = _connection.prepareStatement(occupR,Statement.RETURN_GENERATED_KEYS);
                     pStmOcupacionR.setInt(1, (pasajeros.get(i)).getIdPassenger());
-                    pStmOcupacionR.setString(2, (pasajeros.get(i)).getAsiento());
+                    pStmOcupacionR.setString(2, (pasajerosR.get(i)).getAsiento());
                     
-                int rowO = pStmOcupacionR.executeUpdate();
-                    if(rowO == 0){throw new SQLException("caca insert ocupacion");}
+                pStmOcupacionR.executeUpdate();
+                   // if(rowO == 0){throw new SQLException("caca insert ocupacion");}
                 try(ResultSet lastIdO = pStmOcupacionR.getGeneratedKeys()){
                     if(lastIdO.next()){
-                        ocOW.setIdOcupation(lastIdO.getInt(1));
+                        ocR.setIdOcupation(lastIdO.getInt(1));
                     }
                     else{
                         throw new SQLException("caca id ocupacion");
                     }
                 }
+                
+                PreparedStatement pStmVueloVuelta = _connection.prepareStatement("UPDATE flyfunairlines.flight SET PLAZAS = PLAZAS - 1 WHERE ID_FLY ="+ocR.getFlight().getIdFlight());
+                    pStmVueloVuelta.executeUpdate();
+                
                 //aqui el inser en bookig_services
                 for(int k=0 ; k<serviciosR.size(); k++){
-                PreparedStatement pStmServicioR = _connection.prepareStatement(serv);
+                PreparedStatement pStmServicioR = _connection.prepareStatement(servR);
                     pStmServicioR.setInt(1, (serviciosR.get(k)).getIdService());
                     pStmServicioR.setInt(2, ocR.getIdOcupation());
                     
                     pStmServicioR.executeUpdate();
                 }
                 
-            }else{
-                Passenger bebe = pasajerosR.get(i);
-                for(int j=0; j<pasajerosR.size(); j++){
-                    if( (bebe.getAttend().getNif()).equalsIgnoreCase((pasajeros.get(j)).getNif()) ){
-                        PreparedStatement pStmPasajerosR = _connection.prepareStatement(passenger,Statement.RETURN_GENERATED_KEYS);
-                            pStmPasajerosR.setString(1, (bebe).getNif());
-                            pStmPasajerosR.setString(2, (bebe).getPrefix());
-                            pStmPasajerosR.setString(3, (bebe).getSurname());
-                            pStmPasajerosR.setString(4, (bebe).getName());
-                            pStmPasajerosR.setString(5, (bebe).geteMail());
-                            pStmPasajerosR.setString(6, (bebe).getType());
-                            pStmPasajerosR.setInt(7, (bebe).getAttend().getIdPassenger());//aqui necesitamos el id de la persona que está a cargo
-                        
-                        pStmPasajerosR.executeUpdate();
-                    }
-                }
             }
             }
             
         }
-            
-            PreparedStatement pStmBooking = _connection.prepareStatement(booking);
+        String booking = "INSERT INTO flyfunairlines.booking VALUES( default, "+cl.getIdCliente()+", '"+bookingCode+"', "+bk.getrIda()+", "+bk.getrVuelta()+","+bk.getPrecio()+" )";    
+            PreparedStatement pStmBooking = _connection.prepareStatement(booking,Statement.RETURN_GENERATED_KEYS);
                 pStmBooking.executeUpdate();
+                
+                try(ResultSet lastIdO = pStmBooking.getGeneratedKeys()){
+                    if(lastIdO.next()){
+                        bk.setIdBooking(lastIdO.getInt(1));
+                    }
+                    else{
+                        throw new SQLException("caca id ocupacion");
+                    }
+                }
+                
+            PreparedStatement pStmPayment = _connection.prepareStatement("INSERT INTO flyfunairlines.payment VALUES(default, ?, ?, ?)");
+                pStmPayment.setInt(1, bk.getIdBooking());
+                pStmPayment.setInt(2, cl.getIdCliente());
+                pStmPayment.setInt(3, cr.getIdTj());
             
+                pStmPayment.executeUpdate();
+                
+            _connection.commit();
             
         }catch (SQLException ex){
             ex.getMessage();
@@ -431,5 +475,352 @@ public class Operation {
         }
         
     }
+   
+    public AirConnect getAirportsConnected(Connection _connection, int cnx){
+        Airport o;
+        Airport d;
+        AirConnect aC = new AirConnect(cnx);
+        try {
+            String airportO = "SELECT * FROM flyfunairlines.airport WHERE ID_AIRPORT IN (SELECT T_ORIGEN FROM flyfunairlines.air_connect WHERE ID_CONNECT = ?)";
+            PreparedStatement pSaorg = _connection.prepareStatement(airportO);
+                pSaorg.setInt(1, cnx);
+            ResultSet rsO = pSaorg.executeQuery();
+            while(rsO.next()){
+                //con la conexion cnx recogemos el aeropuerto
+                o = new Airport(rsO.getInt("ID_AIRPORT"), rsO.getString("IATA"), rsO.getString("NOMBRE"), rsO.getString("TERMINAL"), rsO.getString("CIUDAD"), rsO.getString("PAIS"));
+                aC.setTermOrigin(o);
+            }
+            
+            String airportD = "SELECT * FROM flyfunairlines.airport WHERE ID_AIRPORT IN (SELECT T_DESTINO FROM flyfunairlines.air_connect WHERE ID_CONNECT = ?)";
+            PreparedStatement pStadest = _connection.prepareStatement(airportD);
+                pStadest.setInt(1, cnx);
+            ResultSet rsD = pStadest.executeQuery();
+            while(rsD.next()){
+                d = new Airport(rsD.getInt("ID_AIRPORT"), rsD.getString("IATA"), rsD.getString("NOMBRE"), rsD.getString("TERMINAL"), rsD.getString("CIUDAD"), rsD.getString("PAIS"));
+                aC.setTermDestiny(d);
+            }
+                
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return aC;
+    }
+    
+    /**
+     * @author Coconut
+     * @param _connection
+     * @param bk
+     * @param nif
+     * @param mail
+     * @return ArrayList de vuelos en los que el usuario introducido puede facturar con su booking code
+     */
+    public ArrayList<Flight> getFlightCheckIn(Connection _connection, String bk, String nif, String mail){
+        Flight v = null;
+        ArrayList<Flight> vuelos = new ArrayList();
+        AirConnect cnxFly;
+        boolean flag = true;
+        try {
+            String cliente = "SELECT * FROM flyfunairlines.client where NIF=? and EMAIL=?;";
+            PreparedStatement pScliente = _connection.prepareStatement(cliente);
+                pScliente.setString(1, nif);
+                pScliente.setString(2, mail);
+            ResultSet rsC = pScliente.executeQuery();
+                if(rsC.wasNull()){
+                    flag = false;
+                }
+            if(flag){ 
+                String vuelo = "SELECT * FROM flyfunairlines.flight f WHERE f.F_SALIDA < date_add(sysdate(), interval 10 day) AND f.ID_FLY IN(SELECT o.VUELO FROM flyfunairlines.occupation o WHERE o.BOOKING_CODE=?);";
+                PreparedStatement pSvuelo = _connection.prepareStatement(vuelo);
+                    pSvuelo.setString(1, bk);
+
+                ResultSet rs = pSvuelo.executeQuery();
+                while(rs.next()){
+                    //aqui hay que recoger el aeropuerto para componer la conexion
+                    //recogemos rs.getInt("CONNECTION");
+                    //cnxFly = new AirConnect(rs.getInt("CONNECTION"));
+                    cnxFly = this.getAirportsConnected(_connection, rs.getInt("CONNECTION"));
+                    
+                    v = new Flight(rs.getInt(1), cnxFly , rs.getString(3), rs.getDate(4).toLocalDate(), rs.getTime(5).toLocalTime(), rs.getFloat(6), rs.getInt("AVION"), rs.getInt("PLAZAS"));
+                    vuelos.add(v);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return vuelos;
+    }
+    
+    /**
+     * @author Coconut
+     * @param _connection
+     * @param p
+     * @return Passenger bebe con su adulto correspondiente asignado
+     */
+    public Passenger getInfant(Connection _connection, Passenger p){
+        Passenger aux = null;
+        try {
+            PreparedStatement pStbebe = _connection.prepareStatement("SELECT * FROM flyfunairlines.passenger WHERE CARGO=?");
+                pStbebe.setInt(1, p.getIdPassenger());
+            
+                ResultSet rsBe = pStbebe.executeQuery();
+                while(rsBe.next()){
+                    LocalDate fcad, fnac;
+                    if(rsBe.getString("FECHA_CAD")==null || rsBe.getString("FECHA_NAC")==null ){
+                        fcad = LocalDate.now();
+                        fnac = LocalDate.now();
+                    }else{    
+                        fcad = LocalDate.parse(rsBe.getString("FECHA_CAD"));
+                        fnac = LocalDate.parse(rsBe.getString("FECHA_NAC"));
+                    }
+                    
+                    aux = new Passenger(rsBe.getInt("ID_PASSENGER"), rsBe.getString("NIF"), "infante", rsBe.getString("NOMBRE"), rsBe.getString("APELLIDOS"), null, rsBe.getString("TIPO"), null, null, fcad, fnac, rsBe.getString("NACIONALIDAD"));
+                }
+                            
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+           return aux; 
+        
+    }
+    
+    /**
+     * @author Coconut
+     * @param _connection
+     * @param bk
+     * @param f
+     * @return ArrayList de Pasajeros con ocupacion a facturar
+     */
+    public ArrayList<Passenger> getPassengersCheckIn(Connection _connection, String bk, Flight f){
+        ArrayList<Passenger> passengers = new ArrayList();
+        ArrayList<Service> services = new ArrayList();
+        Passenger p;
+        Passenger aux = null;
+        try {
+            String pasajeros="select p.*, o.ASIENTO from flyfunairlines.passenger p, flyfunairlines.occupation o where o.VUELO=? and p.ID_PASSENGER in (select PASAJERO from flyfunairlines.occupation where BOOKING_CODE=? and PASAJERO=p.ID_PASSENGER and PASAJERO=o.PASAJERO);";
+            PreparedStatement pStpasaje = _connection.prepareStatement(pasajeros);
+                pStpasaje.setInt(1, f.getIdFlight());
+                pStpasaje.setString(2, bk);
+                
+            ResultSet rsP = pStpasaje.executeQuery();
+            
+            while(rsP.next()){
+                LocalDate fcad, fnac;
+                //Passenger(int idPassenger, String nif, String prefix, String name, String surname, String eMail, String type);
+                if( (rsP.getString("FECHA_CAD"))==null || (rsP.getString("FECHA_NAC"))==null ){
+                    fcad = LocalDate.now();
+                    fnac = LocalDate.now();
+                }else{    
+                    fcad = LocalDate.parse(rsP.getString("FECHA_CAD"));
+                    fnac = LocalDate.parse(rsP.getString("FECHA_NAC"));
+                }
+                aux = new Passenger(rsP.getInt("ID_PASSENGER"), rsP.getString("NIF"),rsP.getString("PREFIJO"),rsP.getString("NOMBRE"), rsP.getString("APELLIDOS"), rsP.getString("EMAIL"), rsP.getString("TIPO"), rsP.getString("ASIENTO"), null, fcad, fnac, rsP.getString("NACIONALIDAD"));
+                passengers.add(aux);
+            }
+            
+            Iterator itr = passengers.iterator();
+            //casca aqui, wtf happens?
+            while(itr.hasNext()){
+                p = (Passenger)itr.next();
+                int id = p.getIdPassenger();
+                String servicios = "select * from flyfunairlines.service where ID_SERVICE in (select SERVICIO from flyfunairlines.occupation_service where OCUPACION in (select ID_OCP from flyfunairlines.occupation where PASAJERO=? and VUELO=?));";
+                PreparedStatement pSserv = _connection.prepareStatement(servicios);
+                    pSserv.setInt(1, id);
+                    pSserv.setInt(2, f.getIdFlight());
+                    //ahora falla aqui
+                ResultSet rsS = pSserv.executeQuery();
+                    while(rsS.next()){
+                        p.getServices().add(new Service(rsS.getInt("ID_SERVICE"), rsS.getString("DENOMINACION"), rsS.getString("DESCRIPCION"), rsS.getFloat("PRECIO")));
+                        if(rsS.getString("DENOMINACION").equalsIgnoreCase("infante")){
+                            //FUNCION QUE DEVUELVA EL PASAJERO BEBE DEL PASAJERO QUE POSEE EL SERVICIO
+                            aux = this.getInfant(_connection, p);
+                            aux.setAttend(p);
+                        }
+                    }
+            }
+                passengers.add(aux);
+                
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return passengers;
+    }
+    
+    public void checkIn(Connection _connection, Occupation oc){
+        
+        try {
+            _connection.setAutoCommit(false);
+            
+            this.updatePassenger(_connection, oc);
+            this.updateBooking(_connection, oc);
+            
+            _connection.commit();
+            
+        }catch (SQLException ex){
+            ex.getMessage();
+            if(_connection != null){
+                try{
+                    _connection.rollback();
+                }catch(SQLException SQLEx2){
+                    SQLEx2.getMessage();
+                }
+            }
+        }
+        
+        
+    }
+    
+    public void updatePassenger(Connection _connection, Occupation oc) throws SQLException{
+        ArrayList<Passenger> ap = oc.getPassengers();
+        Iterator itr = ap.iterator();
+        Passenger p = null;
+        int er;
+            //_connection.setAutoCommit(false);
+            
+            while(itr.hasNext()){
+                p = (Passenger)itr.next();
+            PreparedStatement pSupdate = _connection.prepareStatement("UPDATE flyfunairlines.passenger SET FECHA_CAD=?, NACIONALIDAD=?, FECHA_NAC=? where ID_PASSENGER=?");
+                LocalDate fcad = p.getFechaCaducidadNif();
+                pSupdate.setString(1, fcad.toString());//fecha caducidad nif
+                pSupdate.setString(2, p.getNacionalidad());//nacionalidad
+                LocalDate fnac = p.getFechaNacimiento();
+                pSupdate.setString(3, fnac.toString());//fecha nacimiento
+                pSupdate.setInt(4, p.getIdPassenger());//id pasajero
+            
+            er = pSupdate.executeUpdate();
+            if(er==0)throw new SQLException();
+            
+            PreparedStatement slctOc = _connection.prepareStatement("SELECT * FROM flyfunairlines.occupation WHERE BOOKING_CODE = ? AND VUELO=? AND PASAJERO = ?");
+                slctOc.setString(1, oc.getBookingCode());
+                slctOc.setInt(2, (oc.getFlight()).getIdFlight());
+                slctOc.setInt(3, p.getIdPassenger());
+                
+                ResultSet rsO = slctOc.executeQuery();
+                
+                while(rsO.next()){
+                    oc.setIdOcupation(rsO.getInt(1));
+                }
+            
+            PreparedStatement pSupdtOcc = _connection.prepareStatement("UPDATE flyfunairlines.occupation SET ASIENTO = ? WHERE ID_OCP= ?");
+                pSupdtOcc.setString(1, p.getAsiento());
+                pSupdtOcc.setInt(2, oc.getIdOcupation());
+                
+                er = pSupdtOcc.executeUpdate();
+                if(er==0)throw new SQLException();
+            }
+            
+            /*
+            Este commit debe realizarse sólo si no ha surgido ningun problema
+            a la hora de actualizar la resrva, de igual manera dicho update sólo
+            ha de hacerse si no ha surgido ningun problema -> throws SQLException
+                hay que realizar una funcion que recoja las excepciones si se producen
+                en caso de que se produzcan rollback y en caso de que ninguna de las funciones que
+                forman parte lance dicha excepcion commit
+            */
+            
+        //_connection.commit();
+    
+    }
+    
+    public boolean checkFlight(Connection _connection, Occupation oc){
+        try {
+            //SELECT DISTINCT f.* FROM flyfunairlines.occupation o JOIN flyfunairlines.flight f WHERE o.BOOKING_CODE='abm657en' AND o.VUELO=f.ID_FLY AND f.F_SALIDA > (SELECT F_SALIDA FROM flyfunairlines.flight WHERE ID_FLY = 7);
+            PreparedStatement pSf = _connection.prepareStatement("SELECT DISTINCT f.* FROM flyfunairlines.occupation o JOIN flyfunairlines.flight f WHERE o.BOOKING_CODE=? AND o.VUELO=f.ID_FLY AND f.F_SALIDA > (SELECT F_SALIDA FROM flyfunairlines.flight WHERE ID_FLY = ?)");
+                pSf.setString(1, oc.getBookingCode());
+                pSf.setInt(2, (oc.getFlight()).getIdFlight());
+            ResultSet rsF = pSf.executeQuery();
+            
+            if(rsF.wasNull()){
+                return false;
+            }else{
+                return true;
+            }
+            
+            /*
+            Con esta consulta nos devuelve una fila (true) si existe el vuelo de vuelta y
+            no devuelve nada (false) cuando este no existe
+            
+            true <=> existe vuelta
+            false <=> no existe vuelta o se trata de la vuelta
+            
+            si false, con booking_code update booking:
+            ida <=> vuelta == null
+            vuelta <==> existe vuelta
+            
+            si true, con booking_code update booking ida <=> existe vuelta
+            */
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+        
+    public void updateBooking(Connection _connection, Occupation oc){
+        Booking bk = null;
+        boolean flag = false;
+        try {
+            PreparedStatement pSbking = _connection.prepareStatement("SELECT * FROM flyfunairlines.booking WHERE BK_CODE=?");
+                pSbking.setString(1, oc.getBookingCode());
+                 
+                ResultSet rsBK = pSbking.executeQuery();
+                while(rsBK.next()){
+                    bk = new Booking(rsBK.getInt("ID_BK"), rsBK.getFloat("PRECIO"), rsBK.getString("IDA"), rsBK.getString("VUELTA"));
+                }
+                
+            if( this.checkFlight(_connection, oc) ){
+                //verdad que existe vuelta, luego se actualiza solo ida porque se refiere a ese vuelo
+                
+                PreparedStatement pSUbk =  _connection.prepareStatement("UPDATE flyfunairlines.booking SET IDA='1' WHERE ID_BK=?");
+                    pSUbk.setInt(1, bk.getIdBooking());
+                pSUbk.executeUpdate();
+                
+            }else{
+                //no existe fila de vuelo de vuelta luego, o se trata del vuelo de vuelta o se trata del unico vuelo de ida
+                if(bk.getrVuelta().isEmpty()){
+                    //variable de vuelta vacía, se trata de un check in de un vuelo unico de ida
+                    PreparedStatement pSUbk =  _connection.prepareStatement("UPDATE flyfunairlines.booking SET IDA='1' WHERE ID_BK=?");
+                        pSUbk.setInt(1, bk.getIdBooking());
+                    pSUbk.executeUpdate();
+                }else{
+                    //variable de vuelta > 0 , se trata de un check in del vuelo de vuelta
+                    PreparedStatement pSUbk =  _connection.prepareStatement("UPDATE flyfunairlines.booking SET VUELTA='1' WHERE ID_BK=?");
+                        pSUbk.setInt(1, bk.getIdBooking());
+                    pSUbk.executeUpdate();
+                }
+            }
+                
+            
+            /*
+            En esta funcion se actualiza la tupla de booking que cumpla con los requisitos:
+            todos los pasajeros actualizados correctamente
+            identificada la actualizacion de ida o vuelta
+        
+            if true : update flyfunairlines.booking set ida=1 where vuelta == 0
+            
+            if false: update flyfunairlines.booking set ida=1 where vuelta == null
+            update flyfunairlines.booking set vuelta = 1 where ida = 0 or ida = 1;
+            
+            puesto que necesitamos el id para hacer el update 1º select * booking where bk_code = 'asdf' y
+            segun los datos de ida y vuelta recibidos de esa consulta procedemos con un update u otro en caso de
+            checkFlight::false.
+            */
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void deleteFlight(Connection _conexion, String nVuelo, String fecha){
+        
+        String query = "select * from flyfunairlines.booking where BK_CODE in" +
+"(SELECT BOOKING_CODE FROM flyfunairlines.occupation join flyfunairlines.flight where VUELO=ID_FLY and N_VUELO=? and F_SALIDA=?)" +
+"and BK_CODE not in (select DISTINCT BOOKING_CODE FROM flyfunairlines.occupation o JOIN flyfunairlines.flight f" +
+"WHERE o.VUELO=f.ID_FLY and f.F_SALIDA >" +
+"(SELECT F_SALIDA FROM flyfunairlines.flight WHERE N_VUELO=? and F_SALIDA=?));";
+        
+        
+        
+       
+        
+    }
+    
     
 }

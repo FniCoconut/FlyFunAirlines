@@ -4,6 +4,7 @@
     Author     : Coconut
 --%>
 
+<%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page import="FlyFunPackage.MODEL.Occupation"%>
 <%@page import="FlyFunPackage.MODEL.Service"%>
 <%@page import="FlyFunPackage.MODEL.Passenger"%>
@@ -20,15 +21,19 @@
         <script src="VIEW/js/canvas.js"></script>
         <!-- Canvas de mapa imagen -->
         <script src="VIEW/js/funciones-control.js"></script>
+        <script src="VIEW/js/funciones-usuario.js"></script>
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
         <script src="VIEW/jquery-ui/jquery-ui.min.js"></script>
         <!-- Lireria de jQuery User Interface -->
         <link href="VIEW/css/general-style.css" rel="stylesheet"/>
+        <link href="VIEW/css/style1.css" rel="stylesheet"/>
         <!-- Estilo general, lyout -->
         <link href="VIEW/fonts/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
         <!-- Libreria de FontAwesome -->
+        <link rel="stylesheet" href="VIEW/fonts/Fuente/stylesheet.css" type="text/css" charset="utf-8" />
+        <!-- Fuente -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- Libreria de iconos Material Google -->
         <link rel="stylesheet" href="VIEW/jquery-ui/jquery-ui.min.css">
@@ -36,14 +41,15 @@
        
     </head>
     
-    <body>
+    <body onload="loadAsientos()">
+       
         <!-- Cabecera -->
         <%
         //ArrayList<Service> aux = (ArrayList)session.getAttribute("services");
         ArrayList<Service> aux = new ArrayList();
         Occupation ocOW = (Occupation)session.getAttribute("occupationOW");
         ArrayList<Passenger> pasajeros = ocOW.getPassengers();
-        
+                
         String kind = (String)session.getAttribute("kindTrip");
         %>
         <header class="header-bar">
@@ -64,8 +70,8 @@
         <section class="info centro">
             
             <form action="servletRevisionServicios" class="formulario-viaje">
+                    <span class="header-asiento">Selección de asiento:</span>
                 <div class="adulto pasajeros-servicio">
-                    <span>Selección de asiento:</span>
     <%
         for( int i=0; i<pasajeros.size() ; i++){
             aux = (pasajeros.get(i)).getServices();
@@ -76,9 +82,9 @@
         if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){        
                     %>
                     <div class="pasajero">
-                        <span>Pasajero <%=i+1%>:</span>
+                        <span class="title-pasajero">Pasajero <%=i+1%>:</span>
                         <div class="datos-pasajero">
-                            <input type="hidden" name="asiento<%=i%>" value="" required>
+                            <input type="hidden" name="asiento<%=i%>" value="">
                             <span><%=pasajeros.get(i).getPrefix()+" "+pasajeros.get(i).getName()+" "+pasajeros.get(i).getSurname() %></span><br>
                             <span>NIF: <%=pasajeros.get(i).getNif() %></span><br>
                             <span class="asiento-seleccionado">Asiento seleccionado: </span>
@@ -163,22 +169,27 @@
             ArrayList<Passenger> pasajerosVuelta = ((Occupation)session.getAttribute("occupationR")).getPassengers();
             
             %>
+            
         <div class="asientos-viaje-vuelta">
+            <h1 class="separador"></h1>
+                <span class="header-asiento">Selección de asiento de vuelta:</span>
             <div class="adulto pasajeros-servicio">
-                <span>Selección de asiento de vuelta:</span>
             <%
+                int asiento =0;
                 for( int i=0; i<pasajerosVuelta.size() ; i++){
                     aux = pasajerosVuelta.get(i).getServices();
+                    
                     if( aux != null ){
                     for (int j=0 ; j<aux.size(); j++){
 
                         //el pasajero ha elegido asiento
-                if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){        
+                if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){   
+                    asiento++;
                             %>
                     <div class="pasajero">
-                        <span>Pasajero <%=i+1%>:</span>
+                        <span class="title-pasajero">Pasajero <%=i+1%>:</span>
                         <div class="datos-pasajero">
-                            <input type="hidden" name="asientoV<%=i%>" value="" required>
+                            <input type="hidden" name="asientoV<%=i%>" value="">
                             <span><%=pasajerosVuelta.get(i).getPrefix()+" "+pasajerosVuelta.get(i).getName()+" "+pasajerosVuelta.get(i).getSurname() %></span><br>
                             <span>NIF: <%=pasajerosVuelta.get(i).getNif() %></span><br>
                             <span class="asiento-seleccionado">Asiento seleccionado: </span>
@@ -189,10 +200,9 @@
             }
         }
         }
-    }
     %>
                 </div>
-                
+                <%if(asiento != 0) {%>
                 <div class="airplane-schema">
                     <table class="airplane-style">
                         <tr>
@@ -257,9 +267,11 @@
                         </tr>
                     </table>
                 </div>
+                <%
+                }    }
+    %>
             </div>
-                <input type="submit" class="btn-siguiente" value=">" />
-                
+                <button class="btn-siguiente"><i class="fa fa-paper-plane"></i></button>                
             </form>
             
         </section>
@@ -271,20 +283,20 @@
         <section class="pantalla-usuario" id="pantalla-usuario">
         </section>    
             <aside class="usuario" id="area-usuario">
-                <form action="" class="formulario-cliente">
-                    <div class="datos-usuario inicio-sesion">
-                        <label for="id-usuario">Nombre de usuario</label>
-                        <br>
-                        <input type="text" id="id-usuario"/>
-                        <br><br>
-                        <label for="pass-usuario">Contraseña</label>
-                        <br>
-                        <input type="password" />
-                        <br>
-                        <button onclick="validaUsuario(this.idUsuario.value, this.pas.value)">Entra<i class="fa fa-sign-in fa-2x"></i></button>
-                    </div>
-                </form>
-                <button onclick="window.location.href='cliente.jsp'"><i class="fa fa-plus-circle fa-2x"></i>Regístrate</button>
+                <div id="head-aside" class="head-aside"></div>
+                <div class="btn-inicio" onclick="inicioSesion()"><span>Inicia sesión</span></div>
+                <div class="btn-inicio" onclick="registro()"><span>Nuevo usuario</span></div>
+                <div class="btn-inicio" onclick="facturar()"><span>Check - in</span></div>
+               
             </aside>
+         <%
+            Client cliente = (Client)session.getAttribute("client");
+            if(cliente != null){
+                %>
+                
+            <script> userLogged(); </script>
+                <%
+            }
+            %>
     </body>
 </html>

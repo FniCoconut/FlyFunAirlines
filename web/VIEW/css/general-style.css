@@ -2,16 +2,22 @@
     Created on : 26-dic-2015, 15:00:19
     Author     : Coconut
 */
+button, input, textarea{ border-radius:0px;}
+input:focus, textarea:focus{outline:0;}
+a{text-decoration: none; color: #000;}
 
 * {
     margin: 0;
+    font-family: 'bariol_regularregular', Arial, sans-serif;
 }
 
+body{}
+
 .header-bar {
-    background-color: #4e4e4e;
+    background-color: #7a1ea1;
     color: white;
     font-family: sans-serif;
-    height: 90px;
+    height: 97px;
     position: fixed;
     width: 100%;
 }
@@ -25,13 +31,15 @@
     width: 300px;
 }
 
+.title>span{
+    font-size: 2em;
+}
+
 .logo {
     height: 80px;
     position: relative;
     width: 100%;
 }
-
-
 
 .logo > img {
     float: left;
@@ -56,6 +64,14 @@
 .path-bar {
 }
 
+.vuelo{
+    
+}
+
+.adultoCargo{
+    width: 200px;
+}
+
 .info {
     float: left;
     margin-top: 100px;
@@ -64,8 +80,24 @@
 aside.info {
     width: 180px;
     height: 100%!important;
-    background-color: green;
-    height: 550px;
+    background-color: #F3E5F5;
+    height: 555px;
+}
+
+.izquierda, .derecha, .centro{
+    position:fixed;
+}
+
+.izquierda{
+    left:0;
+}
+
+.derecha{
+    left:calc(100% - 180px);
+}
+
+.centro{
+    left: 180px;
 }
 
 section.info {
@@ -78,19 +110,24 @@ section.info {
 .formulario-viaje{
     width: 100%;
     height: auto;
+    float:left;
 }
 
-.estilo-origen{
+.estilo-origen, .estilo-destino{
     float: left;
     width: 50%;
     text-align: center;
 }
 
-.estilo-destino{
-    float: left;
-    width: 50%;
-    text-align: center;
+.lbl-origen{margin-left: 100px;margin-right: 5px;color:#4A148C;}
+
+.slc-origen{
+/*    margin-right: 5px;*/
 }
+
+.lbl-destino, label{color:#4A148C;}
+
+.slc-destino{margin-left: 5px;margin-right: 100px;}
 
 .datos-ida, .datos-vuelta{
     margin-top: 10px;
@@ -122,20 +159,24 @@ section.info {
 }
 
 .btn-siguiente{
-    position: relative;
-    margin-left: calc(100% - 40px);
+    position: fixed;
+    left: calc((100% - 40px) / 2);
+    right: calc((100% - 40px) / 2);
+    top: 575px;
     width: 40px;
     height: 40px;
     padding: 0px;
     border: 0px;
     border-radius: 40px;
-    background-color: red;
+    background-color: #68efad;
+    color:#4A148C;
 }
 
 .acceso-usuario{
     height: 80px;
     float: right;
     width: 50px;
+    color:#68efad;
 }
 
 .acceso-usuario>i{
@@ -144,7 +185,7 @@ section.info {
 }
 
 .pantalla-usuario{
-    background-color: rgba(89, 45, 95, 0.45);
+    background-color: rgba(204, 204, 204, 0.6);
     height: 100%;
     width: 100%;
     position: fixed;
@@ -152,19 +193,73 @@ section.info {
 }
 
 .usuario{
-    background-color: #aaa;
+    background-color: #F3E5F5;
     height: 100%;
     width: 250px;
     text-align: center;
     position: fixed;
     right: 0;
     display:none;
+    z-index: 1000;
+    box-shadow: 0 -5px 10px #363636;
+}
+
+.head-aside{
+    background-color: #7a1ea1;
+    color: white;
+    height: 97px;
+    font-family: sans-serif;
+    width: 100%;
+}
+
+.inp-inicio{
+    width: 45px!important;
+}
+
+button{cursor: pointer;}
+
+.btn-inicio{
+    background-color: rgba(89, 45, 95, 0.45);
+    width: 100%;
+    height: 150px;
+    color: white;
+    transition: 500ms;
+    cursor: pointer;
+}
+
+.btn-inicio:hover{
+    color:#4A148C;
+    background-color:#68efad;
+    transition: 500ms;
+}
+
+.btn-inicio>span{
+    position: relative;
+    font-size: 1.5em;
+    top: calc(80% / 2);
 }
 
 .formulario-cliente{
+    background-color: #DBD5DC;
     position:relative;
-    top: 250px;
-    right:0px;
+    padding-top: 30px;
+}
+
+.formulario-registro{
+    width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 35px;
+    background-color: #DBD5DC;
+}
+
+.formulario-registro>label, .formulario-registro>select, .formulario-registro>input{
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.formulario-registro>button{
+    margin-top: 10px;
 }
 
 footer{
@@ -177,14 +272,24 @@ footer{
 
 .adulto, .nino, .bebe{
     width: 100%;
-    height: 100%;
+    height: auto;
     float: left;
 }
 
 .formulario-pasajero, .servicios{
-    width: 50%;
+    width: 35%;
     height: 105px;
     float: left;
+    margin-top: 15px;
+}
+
+.formulario-pasajero, .pasajero{
+    margin-left: 15%;
+    clear: both;
+}
+
+.servicios{
+    margin-right: 15%;
 }
 
 .serv-ida, .serv-vuelta{
@@ -224,12 +329,17 @@ footer{
     cursor: pointer;
 }
 
+.seatV{
+    cursor: pointer;
+}
+
 .pasillo{
     width:40px;
 }
 
 .popUp{
-    background-color: rgba(89, 45, 95, 0.45);
+    color:white;
+    background-color: rgba(204, 204, 204, 0.6);
     height: 100%;
     width: 100%;
     position: fixed;
@@ -245,5 +355,20 @@ footer{
     padding: 20px;
     text-align: center;
     margin-top: calc((50% - 100px) / 2 );
-    background-color: #aaa;
+    background-color: #7a1ea1;
 }
+
+.btn-popup{
+    width: 100%;
+    height: 35px;
+    border: none;
+    background-color: #DBD5DC;
+    color:#691a99;
+    transition:500ms;
+}
+
+.btn-popup:hover{
+    background-color: #68efad;
+    transition:500ms;
+}
+/*500:#9b26af ; 700:#7a1ea1 ; 800:#691a99 ; Accent A200:#68efad*/
