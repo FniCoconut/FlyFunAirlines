@@ -60,6 +60,18 @@
         <servlet-name>servletAsientos</servlet-name>
         <servlet-class>FlyFunPackage.CONTROLLER.servletAsientos</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>servletCloseClientSession</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletCloseClientSession</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletReservasCliente</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletReservasCliente</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>servletCargaReservasCliente</servlet-name>
+        <servlet-class>FlyFunPackage.CONTROLLER.servletCargaReservasCliente</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>servletOrigen</servlet-name>
         <url-pattern>/servletOrigen</url-pattern>
@@ -119,6 +131,18 @@
     <servlet-mapping>
         <servlet-name>servletAsientos</servlet-name>
         <url-pattern>/servletAsientos</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletCloseClientSession</servlet-name>
+        <url-pattern>/servletCloseClientSession</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletReservasCliente</servlet-name>
+        <url-pattern>/servletReservasCliente</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>servletCargaReservasCliente</servlet-name>
+        <url-pattern>/servletCargaReservasCliente</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -1,25 +1,21 @@
 <%-- 
-    Document   : cliente
-    Created on : 23-dic-2015, 19:34:19
+    Document   : viajereservado
+    Created on : 19-mar-2016, 16:58:34
     Author     : Coconut
 --%>
 
-<%@page import="java.util.Iterator"%>
-<%@page import="FlyFunPackage.MODEL.Flight"%>
-<%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Check In - Fly Fun Airlines</title>
+        <title>Proceso Finalizado - Fly Fun Airlines</title>
         
         <script src="VIEW/jquery/jquery-1.12.0.min.js"></script> 
         <!-- Libreria de jQuery compatible con IE -->
         <script src="VIEW/js/canvas.js"></script>
         <!-- Canvas de mapa imagen -->
         <script src="VIEW/js/funciones-control.js"></script>
-        <script src="VIEW/js/funciones-usuario.js"></script>
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
@@ -32,21 +28,13 @@
         <!-- Libreria de FontAwesome -->
         <link rel="stylesheet" href="VIEW/fonts/Fuente/stylesheet.css" type="text/css" charset="utf-8" />
         <!-- Fuente -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Libreria de iconos Material Google -->
         <link rel="stylesheet" href="VIEW/jquery-ui/jquery-ui.min.css">
         <!-- Estilos de la librería jQ -->
         
     </head>
     <body>
-        <script>
-            function setCheckInVuelo(id){
-                document.getElementById('checkInVuelo').value=id; 
-            }
-        </script>
-        <%
-            ArrayList<Flight> vuelosCheckIn = (ArrayList)session.getAttribute("checkFlights");
-            Iterator itr = vuelosCheckIn.iterator();
-        %> 
-        <!-- Cabecera -->  
         <header class="header-bar">
             <div class="logo">
                 <img src="./VIEW/img/logo.jpg" width="80" height="80" />
@@ -62,26 +50,12 @@
         </aside>
         
         <section class="info centro">
-            <span class="header-asiento">Check - In</span>
-            <form action="servletCheckInVuelo" class="formulario-viaje">
-                <% while(itr.hasNext()){ 
-                    int i = 0;
-                Flight f = (Flight)itr.next();
-                %>
-                <div class="vuelo" onclick="setCheckInVuelo('<%=f.getIdFlight()%>')">
-                    
-                    <span>Origen:<%=f.getConnection().getTermOrigin().getCity()%></span>
-                    <span>Destino:<%=f.getConnection().getTermDestiny().getCity()%></span>
-                    <span><%=f.getDepartureDate() %></span><br>
-                    <span><%=f.getDepartureTime() %></span><br>
-                    <span><%=f.getFrecio() %></span>
-                </div>
-                <% i++; } %>
-                <input type="hidden" value="" id="checkInVuelo" name="vuelo" /><br>
-                <input type="submit" value="Facturar" />
-            </form>
-            
+            <div class="fin-proceso">
+                <i class="ico fa fa-check-square-o fa-3x"></i><span class="msj-fin-proeso header-finproceso">Viaje terminado</span>
+                <button class="btn-popup" onclick="window.location.href='inicioviaje.jsp'">volver</button>
+            </div>
         </section>
+        
         <!-- tiempo + info viaje -->
         <aside class="info derecha">
             seccion de info vuelo y tiempo
@@ -94,7 +68,6 @@
                 <div class="btn-inicio" onclick="inicioSesion()"><span>Inicia sesión</span></div>
                 <div class="btn-inicio" onclick="registro()"><span>Nuevo usuario</span></div>
                 <div class="btn-inicio" onclick="facturar()"><span>Check - in</span></div>
-               
             </aside>
         
     </body>

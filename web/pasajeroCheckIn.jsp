@@ -38,7 +38,7 @@
         <!-- Estilos de la librería jQ -->
         
     </head>
-    <body>
+    <body onload="loadAsientos()">
         <%
             Occupation oc = (Occupation)session.getAttribute("occupationCheckIn");
             ArrayList<Passenger> pasajeros = oc.getPassengers();
@@ -77,7 +77,8 @@
                         <input id="fnac" type="date" name="fnac<%=p.getIdPassenger()%>" value="<%=p.getFechaNacimiento() %>" /><br>
                         <label for="nacioladiad">Nacionalidad</label><br>
                         <input type="text" name="nacionalidad<%=p.getIdPassenger()%>" value="<%=p.getNacionalidad() %>"/><br>
-                        <input type="hidden" name="asiento<%=p.getIdPassenger() %>" value="" />
+                        <input type="hidden" class="asiento" name="asiento<%=p.getIdPassenger()%>" value="<%=p.getAsiento()%>" />
+                        <!-- mirar funciones-control.js 80 -->
                         <span class="asiento-seleccionado">Asiento seleccionado: <%=p.getAsiento()%></span>
                     </div>
                 </div>

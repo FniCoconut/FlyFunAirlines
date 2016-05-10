@@ -46,6 +46,17 @@ public class Booking {
         this.rVuelta = rVuelta;
     }
 
+    public Booking(int idBooking, Client client, float precio, String rIda, String rVuelta) {
+        this.idBooking = idBooking;
+        this.client = client;
+        this.precio = precio;
+        this.ida = null;
+        this.vuelta = null;
+        this.rIda = rIda;
+        this.rVuelta = rVuelta;
+        
+    }
+
     
     
     public String getrIda() {
@@ -106,24 +117,31 @@ public class Booking {
     }
 
     public void priceCalc(){
-        float pt;
-        pt = this.ida.getFlight().getFrecio();
+        float pt = 0;
         
         for(int i=0 ; i< this.ida.getPassengers().size(); i++){
+            pt += this.ida.getFlight().getFrecio();
+            
             if((this.ida.getPassengers().get(i)).getServices() != null){
+                
             for(int j=0; j<(this.ida.getPassengers().get(i)).getServices().size(); j++ ){
                 pt += ((this.ida.getPassengers().get(i)).getServices().get(j)).getFrecio();
             }
+            
             }          
         }
          
         if( this.vuelta != null ){
-            pt += this.vuelta.getFlight().getFrecio();
+            
         for(int i=0 ; i< this.vuelta.getPassengers().size(); i++){
+            pt += this.vuelta.getFlight().getFrecio();
+            
             if((this.ida.getPassengers().get(i)).getServices() != null){
+                
             for(int j=0; j< (this.vuelta.getPassengers().get(i)).getServices().size(); j++ ){
                 pt += ((this.vuelta.getPassengers().get(i)).getServices().get(j)).getFrecio();
-            }          
+            }  
+            
             } 
         }
         }

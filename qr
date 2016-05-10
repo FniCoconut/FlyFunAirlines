@@ -1,0 +1,18 @@
+//Esto al principio del archivo
+<%String qr=codReservaIda+" "+codReservaVuelta+" "+((compras)session.getAttribute("compra")).getLoc();%>
+
+//El div donde se pone el codigo qr
+<div class="billeteQr">
+    <div id="qr<%=i%>">
+        <script type="text/javascript">
+            var qrcode = new QRCode(document.getElementById('qr<%=i%>'), {
+                width:112,
+                height:112
+            });
+            function makeCode () {       
+                qrcode.makeCode("<%=qr%>");
+            }
+            makeCode();
+        </script>
+    </div>
+</div>

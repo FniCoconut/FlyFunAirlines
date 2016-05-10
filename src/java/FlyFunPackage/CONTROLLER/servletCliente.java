@@ -63,14 +63,14 @@ public class servletCliente extends HttpServlet {
             String adress = request.getParameter("direccionCliente");
             String pass = request.getParameter("passwordCliente");
             
-            session.setAttribute("client", new Operation().addCliente(connection, new Client(nif, prefix, surname, name, tlf, eMail, adress, pass)));
+            Client cliente =  new Operation().addCliente(connection, new Client(nif, prefix, surname, name, tlf, eMail, adress, pass));
+            session.setAttribute("client", cliente);
 //            if(new Operation().addCliente(connection, new Client(nif, prefix, surname, name, tlf, eMail, adress, pass))){
 //            response.sendRedirect("inicioviaje.jsp");
 //            }else{
 //                response.sendRedirect("cliente.jsp");
 //            }
-            String referer = request.getHeader("referer");
-            response.sendRedirect(referer);
+            response.sendRedirect("inicioviaje.jsp");
             
         }
     }

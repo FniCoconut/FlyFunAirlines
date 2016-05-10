@@ -4,6 +4,7 @@
     Author     : Coconut
 --%>
 
+<%@page import="com.google.gson.Gson"%>
 <%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page import="FlyFunPackage.MODEL.Service"%>
 <%@page import="java.util.ArrayList"%>
@@ -81,7 +82,7 @@
                         </select><br/>
                         <label for="name">NOMBRE</label><input type="text" name="name<%=i%>" class="i-adulto" /><br/>
                         <label for="surname">APELLIDOS</label><input type="text" name="surname<%=i%>" class="i-adulto" /><br/>
-                        <label for="nif">NIF</label><input type="text" name="nif<%=i%>" class="i-adulto" /><br/>
+                        <label for="nif">NIF</label><input type="text" id="a<%=i%>" name="nif<%=i%>" class="i-adulto" onfocusout="letraDni(this.value, 'a<%=i%>')"/><br/>
                         <label for="email">e-MAIL</label><input type="email" name="email<%=i%>" /><br/>
                     </div>
                     
@@ -116,7 +117,7 @@
                 <span class="title-pasajero">Niño <%=i+1%></span><br>
                         <label for="nameNino">NOMBRE</label><input type="text" name="nameNino<%=i%>" /><br/>
                         <label for="surnameNino">APELLIDOS</label><input type="text" name="surnameNino<%=i%>" /><br/>
-                        <label for="nifNino">NIF</label><input type="text" name="nifNino<%=i%>" /><br/>
+                        <label for="nifNino">NIF</label><input type="text" id="n<%=i%>" name="nifNino<%=i%>" onfocusout="letraDni(this.value, 'n<%=i%>')" /><br/>
                         <label for="emailNino">e-MAIL</label><input type="text" name="emailNino<%=i%>"  /><br/>
                     </div>
                     <div class="servicios">
@@ -150,7 +151,7 @@
                 <span class="title-pasajero">Bebé <%=i+1%></span><br>
                     <label for="nameBebe">NOMBRE</label><input type="text" name="nameBebe<%=i%>" id="nameBebe"/><br/>
                     <label for="surnameBebe">APELLIDOS</label><input type="text" name="surnameBebe<%=i%>" id="surnameBebe"/><br/>
-                    <label for="nifBebe">NIF</label><input type="text" name="nifBebe<%=i%>" id="nifBebe"/><br/>
+                    <label for="nifBebe">NIF</label><input type="text" id="b<%=i%>" name="nifBebe<%=i%>" id="nifBebe"  onfocusout="letraDni(this.value, 'b<%=i%>')" /><br/>
                     
                     <label for="bebe<%=i%>">ADULTO A CARGO</label>
                     <select id="bebe<%=i%>" class="adultoCargo" onclick="adultoCargo(this.id)" name="adultoCargo<%=i%>" >
@@ -185,9 +186,11 @@
         <%
             Client cliente = (Client)session.getAttribute("client");
             if(cliente != null){
+                Gson g = new Gson();
+                String json = g.toJson(cliente);
                 %>
                 
-            <script> userLogged(); </script>
+            <script> userLogged(<%=json%>); </script>
                 <%
             }
             %>

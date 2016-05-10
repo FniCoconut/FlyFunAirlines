@@ -39,9 +39,11 @@ public class servletRevisionServicios extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
+            /* creación del booking code */
             char[] elementos={'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 
             char[] conjunto = new char[8];
+            //booking code
             String bkcode = "";
 
             for(int i=0;i<8;i++){
@@ -49,7 +51,7 @@ public class servletRevisionServicios extends HttpServlet {
                 conjunto[i] = (char)elementos[el];
             }
             bkcode = new String(conjunto);
-            
+            //-----
             
             HttpSession session = request.getSession(true);
             
@@ -81,7 +83,10 @@ public class servletRevisionServicios extends HttpServlet {
                             if(kindOfSeat.equalsIgnoreCase("p")){
                                (passengers.get(i).getServices().get(j)).setDenomination("AsientoPremium");
                             }
-                        }else{response.sendRedirect("revisionServicios.jsp");}
+                        }//else{
+                            //cuando uno de los asientos de ida es null salta a esta condicion
+                            //¿A caso no guarda los de vuelta por esto?
+                         //   response.sendRedirect("revisionServicios.jsp");}
                     }
                     //ASIGNAR ASIENTO AL OBJ PASAJERO
                     for(int k=0 ; k<services.size(); k++){
@@ -101,6 +106,7 @@ public class servletRevisionServicios extends HttpServlet {
             Occupation vuelta = null;
             String codV = "null";
             //servicios de vuelta
+            
             if( kind.equalsIgnoreCase("vuelta")){
                 codV = "1";
                 vuelta = (Occupation)session.getAttribute("occupationR");
@@ -122,7 +128,7 @@ public class servletRevisionServicios extends HttpServlet {
                             if(kindOfSeat.equalsIgnoreCase("p")){
                                (passengersReturn.get(i).getServices().get(j)).setDenomination("AsientoPremium");
                             }
-                        }else{response.sendRedirect("revisionServicios.jsp");}
+                        }//else{response.sendRedirect("revisionServicios.jsp");}
                     }
                     
                     for(int k=0 ; k<services.size(); k++){

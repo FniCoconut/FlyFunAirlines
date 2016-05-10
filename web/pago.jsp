@@ -4,6 +4,7 @@
     Author     : Coconut
 --%>
 
+<%@page import="com.google.gson.Gson"%>
 <%@page import="FlyFunPackage.MODEL.Card"%>
 <%@page import="FlyFunPackage.MODEL.Service"%>
 <%@page import="FlyFunPackage.MODEL.Passenger"%>
@@ -30,6 +31,7 @@
         <script src="VIEW/jquery-ui/jquery-ui.min.js"></script>
         <!-- Lireria de jQuery User Interface -->
         <link href="VIEW/css/general-style.css" rel="stylesheet"/>
+        <link href="VIEW/css/style1.css" rel="stylesheet"/>
         <!-- Estilo general, lyout -->
         <link rel="stylesheet" href="VIEW/fonts/Fuente/stylesheet.css" type="text/css" charset="utf-8" />
         <!-- Fuente -->
@@ -42,6 +44,7 @@
     <body>
         <%
             //HttpSession session = request.getSession(true);
+            String nombre, apellido, nif;
             Booking reserva = (Booking)session.getAttribute("booking");
             Client cliente = (Client)session.getAttribute("client");
             
@@ -49,18 +52,28 @@
             ArrayList<Passenger> pasajeros = ida.getPassengers();
                 
             if(cliente == null){
+                nombre = "";
+                apellido = "";
+                nif = "";
               %>
               <script>
                   popUpCliente();
-                 //alert("");
               </script>
               <%
-            }else{ Card crd = cliente.getCard(); 
-            %>
-            <script> userLogged() </script>
-            <%
+            }else{ Card crd = cliente.getCard();
+                nombre = cliente.getSurname();
+                apellido = cliente.getName();
+                nif = cliente.getNif();
+            
+                Gson g = new Gson();
+                String json = g.toJson(cliente);
+                %>
+                
+            <script> userLogged(<%=json%>); </script>
+                <%
             }
-        %> 
+            %>
+         
               
         <!-- Cabecera -->  
         <header class="header-bar">
@@ -80,7 +93,7 @@
         <!-- Vuelos disponibles -->
                            
         
-        <section class="info centro">
+        <section class="info centro" id="resumenPago">
             <div class="resumen-reserva">
                 <div class="resumen-viaje-ida">
                 <div class="resumen-vuelo">
@@ -91,7 +104,7 @@
                 %>
                 
                 <div class="resumen-pasajero">
-                    <span>Pasajero: <%=pasajeros.get(i).getName()%>, <%=pasajeros.get(i).getSurname()%></span>
+                    <span>Pasajero: <%=pasajeros.get(i).getName()%> <%=pasajeros.get(i).getSurname()%></span>
                     <%if(pasajeros.get(i).getServices() != null){
                         %>
                         <div class="resumen-pasajero-servicios">
@@ -115,14 +128,14 @@
             ArrayList<Passenger> pasajerosVuelta = vuelta.getPassengers();
                              %>
                 <div class="resumen-viaje-vuelta">
-                   <% 
-                for ( int i=0 ; i<pasajerosVuelta.size() ; i++){
-                %>
                 <div class="resumen-vuelo">
                     <span>Código de vuelo: <%=vuelta.getFlight().getNumFlight() %></span>
                 </div>
+                   <% 
+                for ( int i=0 ; i<pasajerosVuelta.size() ; i++){
+                %>
                 <div class="resumen-pasajero">
-                    <span>Pasajero: <%=pasajerosVuelta.get(i).getName()%>, <%=pasajerosVuelta.get(i).getSurname()%></span>
+                    <span>Pasajero: <%=pasajerosVuelta.get(i).getName()%> <%=pasajerosVuelta.get(i).getSurname()%></span>
                     <%if(pasajerosVuelta.get(i).getServices() != null){
                         %>
                         <div class="resumen-pasajero-servicios">
@@ -143,12 +156,13 @@
                 <% } %>
             </div>
             
-            <button>Confirmar compra</button>
+            <button class="btn-popup" onclick="pagar()">Confirmar compra</button>
             
             <div class="pago">
                 <form action="servletPago">
                     <div class="datos-cliente">
                         <!-- Esto se rellena con los datos del cliente -->
+                        <span>Cliente: <%=apellido%>, <%=nombre%> <%=nif%></span>
                     </div>
                     <div class="datos-tarjeta">
                         <label></label><select>
@@ -160,8 +174,8 @@
                         <label for="mesCad">Mes de caducidad</label><input type="number" id="mesCad" name="mesCad" min="1" max="12" /><br>
                         <label for="anoCad">Año de caducidad</label><input type="number" id="anoCad" name="anoCad" min="2016" /><br>
                     </div>
-                    
-                    <input type="submit" name="confirmPayment" value="Confirmar pago" />
+                    <div class='btn-popup' onclick="printDiv('resumenPago')">Imprimir Resumen</div>
+                    <input class="btn-popup" type="submit" name="confirmPayment" value="Confirmar pago" />
                 </form>
             </div>
             
@@ -180,7 +194,17 @@
                 <div class="btn-inicio" onclick="facturar()"><span>Check - in</span></div>
                
             </aside>
-        
+        <%
+           // Client cliente = (Client)session.getAttribute("client");
+            if(cliente != null){
+                Gson g = new Gson();
+                String json = g.toJson(cliente);
+                %>
+                
+            <script> userLogged(<%=json%>); </script>
+                <%
+            }
+            %>
     </body>
     
 </html>

@@ -62,15 +62,21 @@ public class servletAsientos extends HttpServlet {
             ArrayList total = new ArrayList();
             
             Gson g = new Gson();
+//            Gson ida = new Gson();
+//            Gson vuelta = new Gson();
             
             Occupation OOW = (Occupation)session.getAttribute("occupationOW");
                 asientos = new Operation().getOccupation(connection, OOW.getFlight());
                 total.add(asientos);
+//                ida.toJson(asientos);
+//                total.add(ida);
             if (((String)session.getAttribute("kindTrip")).equals("vuelta")){
                 
             Occupation OR = (Occupation)session.getAttribute("occupationR");
                 asientosV = new Operation().getOccupation(connection, OR.getFlight());
                 total.add(asientosV);
+//                vuelta.toJson(asientosV);
+//                total.add(vuelta);
             }
             
             out.print(g.toJson(total));

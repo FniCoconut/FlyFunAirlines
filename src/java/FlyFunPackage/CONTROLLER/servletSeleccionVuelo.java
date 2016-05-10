@@ -62,8 +62,8 @@ public class servletSeleccionVuelo extends HttpServlet {
             HttpSession session = request.getSession(true);
             Client cliente = (Client)session.getAttribute("client");
             
-                ArrayList<Flight> _vuelosIda= (ArrayList)session.getAttribute("owFly");
-            //recogemos el vuelo necesario, el elegido
+            ArrayList<Flight> _vuelosIda= (ArrayList)session.getAttribute("owFly");
+            //recogemos el vuelo  elegido
             int idOWTrip = Integer.parseInt(request.getParameter("vueloIda"));
             Occupation occupationOneWay = null;
             
@@ -84,7 +84,6 @@ public class servletSeleccionVuelo extends HttpServlet {
                 }
                 session.setAttribute("occupationR", occupationReturn);
             }
-            
             
             response.sendRedirect("pasajero.jsp");
             

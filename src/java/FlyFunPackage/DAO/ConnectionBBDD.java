@@ -18,7 +18,7 @@ public class ConnectionBBDD {
     private Connection Conex;
     private ConnectionBBDD() throws ClassNotFoundException, SQLException{
                 Class.forName("com.mysql.jdbc.Driver");
-                String connectionUrl = "jdbc:mysql://localhost:3306/bdpartidos";
+                String connectionUrl = "jdbc:mysql://localhost:3306/flyfunairlines";
                 Conex = DriverManager.getConnection(connectionUrl,"root","root");
     }
     

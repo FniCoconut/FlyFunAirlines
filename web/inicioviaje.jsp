@@ -3,8 +3,11 @@
     Created on : 23-dic-2015, 19:36:25
     Author     : Coconut
 --%>
+<%@page import="com.google.gson.Gson"%>
 <%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,6 +20,7 @@
         <!-- Canvas de mapa imagen -->
         <script src="VIEW/js/funciones-control.js"></script>
         <script src="VIEW/js/funciones-usuario.js"></script>
+        <script src="VIEW/js/qrcode.js"></script>
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
@@ -33,6 +37,8 @@
         <!-- Estilos de la librería jQ -->
         
         <script>
+            //Esto al principio del archivo
+
         $(document).ready(function(){
             $('#datos-vuelta').hide();
             if( !(navigator.userAgent.indexOf('Chrome') !== -1) ){
@@ -63,13 +69,13 @@
         });
         </script>
     </head>
-    
+
     <body onload="loadOrigin()">
         
         <!-- Cabecera -->  
         <header class="header-bar">
             <div class="logo">
-                <img src="./VIEW/img/logo.jpg" width="80" height="80" />
+                <img src="./VIEW/img/logo.png" width="80" height="80" />
                 <div class="title"><span>Fly Fun Airlines</span></div>
                 <div id="acceso-usuario" class="acceso-usuario"><i class="fa fa-bars fa-2x"></i></div>
                 <nav class="path-bar"></nav>
@@ -149,12 +155,13 @@
             <div id="dinamico" class="vuelo">
                 <div id="airports"></div>
                 <h1 class="separador"></h1>
-                <div id="passengers">
-                    
-                </div>
+                <div id="passengers"></div>
+                <div id="services"></div>
+                <h1 class="separador"></h1>
                 <div id="flight"></div>
                 <div id="price"></div>                    
             </div>
+            
         </aside>
         
         <section class="pantalla-usuario" id="pantalla-usuario">
@@ -171,9 +178,11 @@
         <%
             Client cliente = (Client)session.getAttribute("client");
             if(cliente != null){
+                Gson g = new Gson();
+                String json = g.toJson(cliente);
                 %>
                 
-            <script> userLogged(); </script>
+            <script> userLogged(<%=json%>); </script>
                 <%
             }
             %>

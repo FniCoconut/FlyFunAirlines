@@ -23,7 +23,7 @@ public class Client {
     private String adress;
     private String password;
     private Card card;
-    private ArrayList<Booking> bookingList;
+    private ArrayList bookingList;
 
     
     public Client(){
@@ -35,6 +35,7 @@ public class Client {
         this.tlf = "";
         this.eMail = "";
         this.adress = "";
+        this.bookingList = new ArrayList();
     }
     //-->CONSTRUCTOR ALTA CLIENTE<--
     public Client(String nif, String prefix, String surname, String name, String tlf, String eMail, String adress, String password) {
@@ -46,6 +47,7 @@ public class Client {
         this.eMail = eMail;
         this.adress = adress;
         this.password = password;
+        this.bookingList = new ArrayList();
     }
     //-->CONSTRUCTOR GET CLIENTE FROM BBDD<--
     public Client(int idCliente, String nif, String password, String prefix, String surname, String name, String tlf, String eMail, String adress) {
@@ -58,6 +60,7 @@ public class Client {
         this.tlf = tlf;
         this.eMail = eMail;
         this.adress = adress;
+        this.bookingList = new ArrayList();
     }
     
     public Client(int idCliente, String nif, String password, String prefix, String surname, String name, String tlf, String eMail, String adress, Card card) {
@@ -71,8 +74,17 @@ public class Client {
         this.eMail = eMail;
         this.adress = adress;
         this.card = card;
+        this.bookingList = new ArrayList();
     }
 
+    public ArrayList getBooking(){
+        return this.bookingList;
+    }
+    
+    public void addBooking(ArrayList bk){
+        this.bookingList.add(bk);
+    }
+    
     public String getPrefix() {
         return prefix;
     }

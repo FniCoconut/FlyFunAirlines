@@ -4,6 +4,7 @@
     Author     : Coconut
 --%>
 
+<%@page import="com.google.gson.Gson"%>
 <%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page import="FlyFunPackage.MODEL.Occupation"%>
 <%@page import="FlyFunPackage.MODEL.Service"%>
@@ -49,7 +50,7 @@
         ArrayList<Service> aux = new ArrayList();
         Occupation ocOW = (Occupation)session.getAttribute("occupationOW");
         ArrayList<Passenger> pasajeros = ocOW.getPassengers();
-                
+                int asiento = 0;
         String kind = (String)session.getAttribute("kindTrip");
         %>
         <header class="header-bar">
@@ -79,12 +80,13 @@
             for (int j=0 ; j<aux.size(); j++){
             
                 //el pasajero ha elegido asiento
-        if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){        
+        if( ((aux.get(j)).getDenomination()).equalsIgnoreCase("Asiento") ){
+            asiento++;
                     %>
                     <div class="pasajero">
                         <span class="title-pasajero">Pasajero <%=i+1%>:</span>
                         <div class="datos-pasajero">
-                            <input type="hidden" name="asiento<%=i%>" value="">
+                            <input type="hidden" class="asiento" name="asiento<%=i%>" value="">
                             <span><%=pasajeros.get(i).getPrefix()+" "+pasajeros.get(i).getName()+" "+pasajeros.get(i).getSurname() %></span><br>
                             <span>NIF: <%=pasajeros.get(i).getNif() %></span><br>
                             <span class="asiento-seleccionado">Asiento seleccionado: </span>
@@ -97,7 +99,7 @@
     }
     %>
                 </div>
-                
+        <%   if( asiento > 0 ) { %>
                 <div class="airplane-schema">
                     <table class="airplane-style">
                         <tr>
@@ -107,39 +109,39 @@
                         <!--asientos normales-->
                         <tr>
                             <td class="seat">
-                                <input type="hidden" value="1i" id="1i" name="asientoPassenger"/>
+                                <input type="hidden" value="1i" class="1i" id="1i" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seat">
-                                <input type="hidden" value="2i" id="2i" name="asientoPassenger"/>
+                                <input type="hidden" value="2i" class="2i" id="2i" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="pasillo"><!--pasillo--></td>
                             <td class="seat">
-                                <input type="hidden" value="2d" id="2d" name="asientoPassenger"/>
+                                <input type="hidden" value="2d" class="2d" id="2d" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seat">
-                                <input type="hidden" value="1d" id="1d" name="asientoPassenger"/>
+                                <input type="hidden" value="1d" class="1d" id="1d" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                         </tr>
                         <tr>
                             <td class="seat">
-                                <input type="hidden" value="3i" id="3i" name="asientoPassenger"/>
+                                <input type="hidden" value="3i" class="3i" id="3i" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seat">
-                                <input type="hidden" value="4i" id="4i" name="asientoPassenger"/>
+                                <input type="hidden" value="4i" class="4i" id="4i" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="pasillo"><!--pasillo--></td>
                             <td class="seat">
-                                <input type="hidden" value="4d" id="4d" name="asientoPassenger"/>
+                                <input type="hidden" value="4d" class="4d" id="4d" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seat">
-                                <input type="hidden" value="3d" id="3d" name="asientoPassenger"/>
+                                <input type="hidden" value="3d" class="3d" id="3d" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                         </tr>
@@ -147,12 +149,12 @@
                         <!--asientos premiunm-->
                         <tr>
                             <td class="seat" colspan="2" rowspan="2">
-                                <input type="hidden" value="pi" id="pi" name="asientoPassenger"/>
+                                <input type="hidden" value="pi" class="pi" id="pi" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="pasillo"><!--pasillo--></td>
                             <td class="seat" colspan="2" rowspan="2">
-                                <input type="hidden" value="pd" id="pd" name="asientoPassenger"/>
+                                <input type="hidden" value="pd" class="pd" id="pd" name="asientoPassenger"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                         </tr>
@@ -162,6 +164,7 @@
                         </tr>
                     </table>
                 </div>
+                <% } %>
         <% 
         if(kind.equalsIgnoreCase("vuelta")){
             
@@ -175,7 +178,6 @@
                 <span class="header-asiento">Selección de asiento de vuelta:</span>
             <div class="adulto pasajeros-servicio">
             <%
-                int asiento =0;
                 for( int i=0; i<pasajerosVuelta.size() ; i++){
                     aux = pasajerosVuelta.get(i).getServices();
                     
@@ -189,10 +191,10 @@
                     <div class="pasajero">
                         <span class="title-pasajero">Pasajero <%=i+1%>:</span>
                         <div class="datos-pasajero">
-                            <input type="hidden" name="asientoV<%=i%>" value="">
+                            <input type="hidden" class="asientoV" name="asientoV<%=i%>" value="">
                             <span><%=pasajerosVuelta.get(i).getPrefix()+" "+pasajerosVuelta.get(i).getName()+" "+pasajerosVuelta.get(i).getSurname() %></span><br>
                             <span>NIF: <%=pasajerosVuelta.get(i).getNif() %></span><br>
-                            <span class="asiento-seleccionado">Asiento seleccionado: </span>
+                            <span class="asiento-seleccionadoV">Asiento seleccionado: </span>
                         </div>
                     </div>
             <%
@@ -202,8 +204,8 @@
         }
     %>
                 </div>
-                <%if(asiento != 0) {%>
-                <div class="airplane-schema">
+                <%if(asiento > 0) {%>
+                <div class="airplane-schema" id="return-airplane">
                     <table class="airplane-style">
                         <tr>
                             <td colspan="3"></td>
@@ -212,52 +214,52 @@
                         <!--asientos normales-->
                         <tr>
                             <td class="seatV">
-                                <input type="hidden" value="1i" id="1iV" name="asientoPassenger"/>
+                                <input type="hidden" value="1i" class="1i" id="1iV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seatV">
-                                <input type="hidden" value="2i" id="2iV" name="asientoPassenger"/>
+                                <input type="hidden" value="2i" class="2i" id="2iV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="pasillo"><!--pasillo--></td>
                             <td class="seatV">
-                                <input type="hidden" value="2d" id="2dV" name="asientoPassenger"/>
+                                <input type="hidden" value="2d" class="2d" id="2dV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seatV">
-                                <input type="hidden" value="1d" id="1dV" name="asientoPassenger"/>
+                                <input type="hidden" value="1d" class="1d" id="1dV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                         </tr>
                         <tr>
                             <td class="seatV">
-                                <input type="hidden" value="3i" id="3iV" name="asientoPassenger"/>
+                                <input type="hidden" value="3i" class="3i" id="3iV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seatV">
-                                <input type="hidden" value="4i" id="4iV" name="asientoPassenger"/>
+                                <input type="hidden" value="4i" class="4i" id="4iV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="pasillo"><!--pasillo--></td>
                             <td class="seatV">
-                                <input type="hidden" value="4d" id="4dV" name="asientoPassenger"/>
+                                <input type="hidden" value="4d" class="4d" id="4dV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="seatV">
-                                <input type="hidden" value="3d" id="3dV" name="asientoPassenger"/>
+                                <input type="hidden" value="3d" class="3d" id="3dV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                         </tr>
                         <tr><td colspan="5"></td></tr>
                         <!--asientos premiunm-->
                         <tr>
-                            <td class="seat" colspan="2" rowspan="2">
-                                <input type="hidden" value="pi" id="piV" name="asientoPassenger"/>
+                            <td class="seatV" colspan="2" rowspan="2">
+                                <input type="hidden" value="pi" class="pi" id="piV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                             <td class="pasillo"><!--pasillo--></td>
-                            <td class="seat" colspan="2" rowspan="2">
-                                <input type="hidden" value="pd" id="pdV" name="asientoPassenger"/>
+                            <td class="seatV" colspan="2" rowspan="2">
+                                <input type="hidden" value="pd" class="pd" id="pdV" name="asientoPassengerR"/>
                                 <span><i class="material-icons">event_seat</i></span>
                             </td>
                         </tr>
@@ -292,9 +294,11 @@
          <%
             Client cliente = (Client)session.getAttribute("client");
             if(cliente != null){
+                Gson g = new Gson();
+                String json = g.toJson(cliente);
                 %>
                 
-            <script> userLogged(); </script>
+            <script> userLogged(<%=json%>); </script>
                 <%
             }
             %>

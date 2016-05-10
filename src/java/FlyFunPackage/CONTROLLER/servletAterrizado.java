@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.sql.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -54,12 +57,16 @@ public class servletAterrizado extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
-            LocalDate fechaVuelo;
-            fechaVuelo = LocalDate.parse(request.getParameter("dFlight"));
+            String fechaVuelo = request.getParameter("dFlight");
             String codigoVuelo = request.getParameter("cFlight");
             
-            //new Operation().deleteFlight(connection, fechaVuelo, codigoVuelo);
+            //Date fVuelo = null;
             
+            //DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+            
+            //fVuelo = java.sql.Date.valueOf(fechaVuelo);
+            
+            new Operation().deleteFlight(connection, codigoVuelo, fechaVuelo);
             
         }
     }

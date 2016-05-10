@@ -62,7 +62,7 @@
                 </select>
                 <label for="nombreCliente">Nombre</label><input type="text" id="nombreCliente" name="nombreCliente" maxlength="45" required /><br/> 
                 <label for="apellidoCliente">Apellidos</label><input type="text" id="apellidoCliente" name="apellidoCliente" maxlength="100" required /><br/> 
-                <label for="nifCliente">N.I.F.</label><input type="text" id="nifCliente" name="nifCliente" maxlength="10" required /><br/> 
+                <label for="nifCliente">N.I.F.</label><input type="text" id="nifCliente" name="nifCliente" maxlength="10" required onfocusout="letraDni(this.value)" /><br/> 
                 <label for="tlfCliente">Teléfono</label><input type="text" id="tlfCliente" name="tlfCliente" maxlength="9">
                 <label for="emailCliente">e-Mail</label><input type="email" id="emailCliente" name="emailCliente" maxlength="60" required /><br/> 
                 <label for="direccionCliente">Dirección Postal</label><input type="text" id="direccionCliente" name="direccionCliente" maxlength="140" required /><br/> 

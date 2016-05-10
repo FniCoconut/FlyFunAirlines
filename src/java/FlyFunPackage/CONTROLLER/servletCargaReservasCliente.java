@@ -5,14 +5,9 @@
  */
 package FlyFunPackage.CONTROLLER;
 
-import FlyFunPackage.DAO.ConnectionBBDD;
-import FlyFunPackage.DAO.Operation;
 import FlyFunPackage.MODEL.Client;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,21 +18,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author Coconut
  */
-public class servletLogin extends HttpServlet {
-    private Connection connection;
-    private ConnectionBBDD connectionBBDD;
-    
-    @Override
-    public void init() throws ServletException{
-    
-    try{
-            connectionBBDD = ConnectionBBDD.GetConexion();
-            connection = connectionBBDD.GetCon();
-        }catch(ClassNotFoundException cnfe){  
-                }
-        catch(SQLException sqle){
-        }
-    }
+public class servletCargaReservasCliente extends HttpServlet {
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -51,30 +33,13 @@ public class servletLogin extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);
-            Gson g = new Gson();
+            Client cliente = (Client)session.getAttribute("client");
             
-            Client logged = (Client)session.getAttribute("client");
             
-            if( logged == null ){
-                
-                String user = request.getParameter("user");
-                String pass = request.getParameter("pass");
-                System.out.println(user+" "+pass);
-
-                Client client = new Operation().loginClient(connection, user, pass);
-
-                    session.setAttribute("client", client);
-                
-                String json = g.toJson(client);
-                   out.println(json);
-                    
-            }else{
-
-                String json = g.toJson(logged);
-                   out.println(json);
             
-            }
+            
         }
     }
 

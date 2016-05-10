@@ -5,6 +5,7 @@
  */
 //menu usuario
 function menuUsuario(){
+    
     while(document.getElementById('area-usuario').hasChildNodes()){
        $('#area-usuario').empty(); 
     }
@@ -13,6 +14,32 @@ function menuUsuario(){
         divHeader.setAttribute('id', 'head-aside');
     $('#area-usuario').append(divHeader);
     
+    // btn-inicio inicioSesion()
+        var div = document.createElement('div');
+            div.setAttribute('onclick', 'inicioSesion()');
+            div.className='btn-inicio';
+            var span = document.createElement('span');
+                span.appendChild(document.createTextNode('Inicia sesión'));
+            div.appendChild(span);
+        $('#area-usuario').append(div);
+    
+    // btn-inicio registro()
+        var div = document.createElement('div');
+            div.setAttribute('onclick', 'registro()');
+            div.className='btn-inicio';
+            var span = document.createElement('span');
+                span.appendChild(document.createTextNode('Nuevo usuario'));
+            div.appendChild(span);
+        $('#area-usuario').append(div);
+       
+    // btn-inicio facturar()
+        var div = document.createElement('div');
+            div.setAttribute('onclick', 'facturar()');
+            div.className='btn-inicio';
+            var span = document.createElement('span');
+                span.appendChild(document.createTextNode('Check - in'));
+            div.appendChild(span);
+        $('#area-usuario').append(div);
     
 }
 
@@ -24,6 +51,14 @@ function inicioSesion(){
     var divHeader = document.createElement('div');
         divHeader.className='head-aside';
     $('#area-usuario').append(divHeader);
+    var btn = document.createElement('button');
+        btn.setAttribute('onclick', 'menuUsuario()');
+        btn.className='btn-popup';
+        btn.appendChild(document.createTextNode('Volver '));
+    var ico = document.createElement('i');
+        ico.className='fa fa-caret-square-o-left';
+        btn.appendChild(ico);   
+    $('#area-usuario').append(btn);
     var form = document.createElement('form');
         form.className='formulario-cliente';
     $('#area-usuario').append(form);
@@ -51,13 +86,14 @@ function inicioSesion(){
         inputPass.setAttribute('type', 'password');
         form.appendChild(inputPass);
     var btn = document.createElement('button');
-        btn.setAttribute('onclick', 'validaUsuario(idUsuario.value, pass.value)');
+        btn.setAttribute('onclick', 'return validaUsuario(idUsuario.value, pass.value, false)');
         btn.className='btn-popup';
         btn.appendChild(document.createTextNode('Entra '));
     var ico = document.createElement('i');
         ico.className='fa fa-sign-in';
         btn.appendChild(ico);   
         form.appendChild(btn);
+    
 }
 
 function inicioSesionPop(){
@@ -94,7 +130,7 @@ function inicioSesionPop(){
         inputPass.setAttribute('type', 'password');
         form.appendChild(inputPass);
     var btn = document.createElement('button');
-        btn.setAttribute('onclick', 'validaUsuario(idUsuario.value, pass.value)');
+        btn.setAttribute('onclick', 'return validaUsuario(idUsuario.value, pass.value, true)');
         btn.className='btn-popup';
         btn.appendChild(document.createTextNode('Entra '));
     var ico = document.createElement('i');
@@ -119,11 +155,12 @@ function facturar(){
 
 //Carga formulario de datos de factouración
 function reservas(){
-    window.location.href='reservas.jsp'; 
+    window.location.href='reservas.jsp';
 }
 
 //Función que carga los elementos del aside de usuario cuando este esta logeado
-function userLogged(){
+function userLogged(usuario){
+       
     while(document.getElementById('area-usuario').hasChildNodes()){
        $('#area-usuario').empty(); 
     }
@@ -134,7 +171,13 @@ function userLogged(){
     var divUser = document.createElement('div');
         divUser.setAttribute('id', 'nombreCliente');
         divUser.className='';
-    $('#area-usuario').append(divUser);
+    var nomUser = document.createElement('span');
+        nomUser.appendChild(document.createTextNode(usuario.surname+' '+usuario.name));
+        
+        divHeader.appendChild(divUser);
+        divUser.appendChild(nomUser);
+        
+    //$('#area-usuario').append(divUser);
     
     var divReservas = document.createElement('div');
         divReservas.className='btn-inicio';
@@ -152,4 +195,18 @@ function userLogged(){
         divCheck.appendChild(spanC);
         $('#area-usuario').append(divCheck);
         
+    var divCloseSession = document.createElement('div');
+        divCloseSession.className='btn-inicio';
+        divCloseSession.setAttribute('onclick', 'closeClientSession()');
+    var spanC = document.createElement('span');
+        spanC.appendChild(document.createTextNode('Cerrar Sessión'));
+        divCloseSession.appendChild(spanC);
+        $('#area-usuario').append(divCloseSession);
+        
+}
+
+function reservasCliente(str){
+    alert(str+'hooli');
+    document.getElementById('datosVueloPendientes').innerHTML=str;
+    
 }

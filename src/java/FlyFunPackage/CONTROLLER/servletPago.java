@@ -74,17 +74,27 @@ public class servletPago extends HttpServlet {
             
             cliente.setCard(tjt);
             
-            if(((String)session.getAttribute("kindTrip")).equalsIgnoreCase("vuelta")){
-                //oR = (Occupation)session.getAttribute("occupationR");
-                booking.setClient(cliente);
+            booking.setClient(cliente);
                 booking.priceCalc();
-            }else{
-                booking.setClient(cliente);
-                booking.priceCalc();
-            }
+                
+//            if(((String)session.getAttribute("kindTrip")).equalsIgnoreCase("vuelta")){
+//                //oR = (Occupation)session.getAttribute("occupationR");
+//                booking.setClient(cliente);
+//                booking.priceCalc();
+//            }else{
+//                booking.setClient(cliente);
+//                booking.priceCalc();
+//            }
             
                     new Operation().insertBooking(connection, booking, (String)session.getAttribute("kindTrip"));
-                    response.sendRedirect("index.html");
+                    session.invalidate();
+                    
+                    session = request.getSession(true);
+                    session.invalidate();
+                    
+                    session.setAttribute("client", cliente);
+                    
+                    response.sendRedirect("viajereservado.jsp");
         }
     }
 

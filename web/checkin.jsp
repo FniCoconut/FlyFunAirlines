@@ -18,6 +18,7 @@
         <script src="VIEW/js/canvas.js"></script>
         <!-- Canvas de mapa imagen -->
         <script src="VIEW/js/funciones-control.js"></script>
+        <script src="VIEW/js/funciones-usuario.js"></script>
         <!-- JS de funciones varias -->
         <script src="VIEW/js/ajax.js"></script>
         <!-- Ajax -->
@@ -79,6 +80,8 @@
             %>
                 <br>
                 <button class="btn-popup"><i class="fa fa-ticket"></i> Facturar</button>
+                <br>
+                <div class="btn-popup" onclick="window.location.href='inicioviaje.jsp'"><i class="fa fa-caret-square-o-left"></i> Volver</div>
             </form>
             
         </section>

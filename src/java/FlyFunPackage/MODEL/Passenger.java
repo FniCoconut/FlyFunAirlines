@@ -310,10 +310,6 @@ public class Passenger {
         this.services = new ArrayList();
     }
     
-    
-    
-    
-
     public String getAsiento() {
         return asiento;
     }

@@ -58,26 +58,34 @@ function makeSelectDestiny(){
     
 }
 
-function validaUsuario(user, pass){
+function validaUsuario(user, pass, popup){
+    //user llevará al usuario para mostrar sus datos
     if(window.XMLHttpRequest){OBAJX = new XMLHttpRequest();}
 	else{OBAJX = new ActiveXObject();}
     OBAJX.open('POST', 'servletLogin?user='+user+'&pass='+pass, true);
     OBAJX.send();
     OBAJX.onreadystatechange = function(){
         if(OBAJX.readyState === 4 && OBAJX.status === 200){
-		var str = OBAJX.responseText;
-            if( str === false ){
-                document.getElementById('area-usuario').innerHTML = "-- no hay estanterías disponibles --";
-            }
-            else{
-                document.getElementById('area-usuario').innerHTML = str;
-            }
-    }
-    return false;
+            var str = JSON.parse(OBAJX.responseText);
+            if( str === "null" ){
+                popup= false;
+                menuUsuario();}
+            else{userLogged(str);}
+        }else{
+            popup= false;
+            menuUsuario();
+        }
     };
-    
-}
-
+    return popup;
+    }; 
+   
+//function catchUser(){
+//            if(OBAJX.readyState === 4 && OBAJX.status === 200){
+//                var str = JSON.parse(OBAJX.responseText);
+//            userLogged(str);
+//        }
+//};
+//   
 function dinamicoOD(origen, destino){
     if(window.XMLHttpRequest){OAX = new XMLHttpRequest();}
 	else{OAX = new ActiveXObject();}
@@ -91,7 +99,13 @@ function dinamicoOD(origen, destino){
                 
             }
             else{
+                
                 var contenedor = document.getElementById('airports');
+                
+                while(contenedor.hasChildNodes()){
+                    contenedor.removeChild(contenedor.firstChild);
+                }
+                
                     var spanO = document.createElement('span');
                         spanO.appendChild(document.createTextNode('Salida: '));
                         spanO.className='lbl-destino';
@@ -122,13 +136,40 @@ function dinamicoOD(origen, destino){
 function loadAsientos(){
     if(window.XMLHttpRequest){OAX = new XMLHttpRequest();}
 	else{OAX = new ActiveXObject();}
-        alert('pene');
     OAX.open('POST', 'servletAsientos', true);
     OAX.send();
     OAX.onreadystatechange=function(){
         if(OAX.readyState === 4 && OAX.status === 200){
             var str = JSON.parse(OAX.responseText);
-            alert(str);
+            asientosOcupados(str);
         }
     };
 }
+
+function closeClientSession(){
+    if(window.XMLHttpRequest){OAX = new XMLHttpRequest();}
+	else{OAX = new ActiveXObject();}
+    OAX.open('POST', 'servletCloseClientSession', true);
+    OAX.send();
+    OAX.onreadystatechange=menuUsuario;
+}
+
+function loadReservasCliente(caso){
+    var i = parseInt(caso);
+    if(window.XMLHttpRequest){OAX = new XMLHttpRequest();}
+	else{OAX = new ActiveXObject();}
+        alert('OPEN'+caso);
+    OAX.open('POST', 'servletReservasCliente?caso='+caso, true);
+    OAX.send();
+    OAX.onreadystatechange = function(){
+        if(OAX.readyState === 4 && OAX.status === 200){
+            alert('vamos a pillar reservas');
+            var str = JSON.parse(OAX.responseText);
+            alert('ONREADYSTATECHANGE'+str);
+            reservasCliente(str);
+            
+        }
+    };
+    
+}
+

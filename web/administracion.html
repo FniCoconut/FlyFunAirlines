@@ -20,6 +20,7 @@ and open the template in the editor.
         <script src="VIEW/jquery-ui/jquery-ui.min.js"></script>
         <!-- Lireria de jQuery User Interface -->
         <link href="VIEW/css/general-style.css" rel="stylesheet"/>
+        <link href="VIEW/css/style1.css" rel="stylesheet" />
         <!-- Estilo general, lyout -->
         <link href="VIEW/fonts/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
         <!-- Libreria de FontAwesome -->
@@ -44,26 +45,30 @@ and open the template in the editor.
         <aside class="info izquierda">
         </aside>
         
-        <section class="info centro">        
+        <section class="info centro">
+            
+            <span class="header-vuelo">Panel de Administración.</span>
+                        
             <span class="hidden-span" id="aterrizaje">Despegar Vuelo</span>
             <div class="tab">
                 <a href="#aterrizaje" ><span id="shelves-title" class="tab-link"><i class="fa fa-th icono"></i>Despegue</span></a>
                 <div class="panel" id="datosVuelo">
                     <form action="servletAterrizado" class="">
                         <label for="cFlight">CÓDIGO DE VUELO</label>
-                        <input type="text" placeholder="codigo de vuelo" id="cFlight" />
+                        <input type="text" placeholder="codigo de vuelo" id="cFlight" name="cFlight" />
                         <br>
                         <label for="dFlight">FECHA DE SALIDA</label>
-                        <input type="date" id="dFlight" />
+                        <input type="date" id="dFlight" name="dFlight" />
                         <br>
                         <input type="submit" value="Aterrizar" />
                     </form>
                 </div>
             </div>
-            <span class="hidden-span" id="">Administracion+</span>
+            <span class="hidden-span" id="estadistica">Estadísticas</span>
             <div class="tab">
-                <a href="" ><span id="shelves-title" class="tab-link"><i class="fa fa-th icono"></i>Admin+</span></a>
+                <a href="#estadistica" ><span id="shelves-title" class="tab-link"><i class="fa fa-th icono"></i>Estadísticas</span></a>
                 <div class="panel" id="p-shelve">
+                    <span> Aqui se añadirá la funcionalidad exigida en el examen de marzo</span>
                 </div>
             </div>
             <span class="hidden-span" id="">Administracion+</span>

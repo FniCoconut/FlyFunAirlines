@@ -4,6 +4,7 @@
     Author     : Coconut
 --%>
 
+<%@page import="com.google.gson.Gson"%>
 <%@page import="FlyFunPackage.MODEL.Client"%>
 <%@page import="FlyFunPackage.MODEL.Flight"%>
 <%@page import="java.util.ArrayList"%>
@@ -165,9 +166,11 @@
         <%
             Client cliente = (Client)session.getAttribute("client");
             if(cliente != null){
+                Gson g = new Gson();
+                String json = g.toJson(cliente);
                 %>
                 
-            <script> userLogged(); </script>
+            <script> userLogged(<%=json%>); </script>
                 <%
             }
             %>

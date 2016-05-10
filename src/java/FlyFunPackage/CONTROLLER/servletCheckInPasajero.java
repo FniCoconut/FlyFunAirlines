@@ -70,7 +70,9 @@ public class servletCheckInPasajero extends HttpServlet {
                 LocalDate cad = LocalDate.parse(request.getParameter("fcad"+p.getIdPassenger()));
                 LocalDate nac = LocalDate.parse(request.getParameter("fnac"+p.getIdPassenger()));
                 String nacion = request.getParameter("nacionalidad"+p.getIdPassenger());
+                String asiento = request.getParameter("asiento"+p.getIdPassenger());
                 
+                p.setAsiento(asiento);
                 p.setFechaCaducidadNif(cad);
                 p.setFechaNacimiento(nac);
                 p.setNacionalidad(nacion); 
@@ -83,6 +85,11 @@ public class servletCheckInPasajero extends HttpServlet {
             //Creando la ocupacion y comparando la fecha de vuelo o 
             //añadiendo un campo a la ocupacion que se repetirá en todas las filas
             //pero puede que haga mas facil la eliminación 
+            
+            //aqui generar pdf con los datos de los pasajeros y la ocupacion
+            response.sendRedirect("embarque.jsp");
+            
+            //hay que imprimir la tarjeta de embarque
             
         }
     }

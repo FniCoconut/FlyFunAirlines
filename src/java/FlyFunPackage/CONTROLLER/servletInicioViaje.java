@@ -109,7 +109,8 @@ public class servletInicioViaje extends HttpServlet {
             if(trip.equalsIgnoreCase("vuelta")){
                 String departureReturn = request.getParameter("f_vuelta"); //fecha de vuelta
                 AirConnect airportConnectionReturn = new Operation().getConnectionOneWay(connection, destino, origen); //conexión de vuelta
-                flightReturnTrip = new Operation().oneWayFlights(connection, departureReturn, vacances, airportConnectionReturn); //vuelos de vueta
+                flightReturnTrip = new Operation().returnFlights(connection, departureReturn, vacances, airportConnectionReturn, departureDate); 
+                //vuelos de vueta, añadimos la fecha de ida para que no devuelva regresos anteriores a la ida.
                 
                 session.setAttribute("rFly", flightReturnTrip);
             }

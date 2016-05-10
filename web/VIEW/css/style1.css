@@ -19,7 +19,7 @@ and open the template in the editor.
     transition: 500ms;
 }
 
-.header-vuelo, .header-asiento{
+.header-vuelo, .header-asiento, .header-finproceso{
     float: left;
     margin: 5px;
     margin-top: 10px;
@@ -76,7 +76,9 @@ and open the template in the editor.
     height: 470px;
 }
 /*revisionservicios.jsp*/
-
+.seat, .seatV{
+    color:#4A148C;
+}
 
 
 /*checkin.jsp*/
@@ -84,4 +86,53 @@ and open the template in the editor.
 
 .check-in>input{
     width: 180px;
+}
+
+/*pago.jsp*/
+
+.pago{
+    display:none;
+}
+
+/*fin proceso*/
+
+.fin-proceso{
+    margin-top: 55px;
+    width: 400px;
+    height: 70px;
+    background-color: #DBD5DC;
+    float:left;
+    margin-left: calc((100% - 400px) / 2 );
+    text-align: center;
+}
+
+.fin-proceso>span{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    float: left;
+}
+
+.fin-proceso>button{
+    float:left;
+}
+
+.ico, .msj-fin-proeso{
+    float:left;
+}
+
+.ico{
+    margin-left: 25%;
+    margin-top: 15px;
+    
+}
+
+.msj-fin-proeso{
+    position: relative;
+    top: 10px;
+    width: 150px;
+    margin-left: 20px;;
+}
+
+.fa-check-square-o{
+    color: white;
 }
